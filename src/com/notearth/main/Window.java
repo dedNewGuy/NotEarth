@@ -2,6 +2,7 @@ package com.notearth.main;
 
 import com.jogamp.opengl.awt.GLJPanel;
 import com.jogamp.opengl.util.FPSAnimator;
+import com.notearth.inputHandler.InputHandler;
 
 import javax.swing.*;
 import java.awt.*;
@@ -20,8 +21,9 @@ public class Window extends GLJPanel {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                Renderer renderer = new Renderer();
-                GLJPanel window = new Window(renderer);
+                InputHandler inputHandler = new InputHandler();
+                Renderer renderer = new Renderer(inputHandler);
+                GLJPanel window = new Window(renderer, inputHandler);
                 window.setPreferredSize(new Dimension(WIN_WIDTH, WIN_HEIGHT));
 
                 FPSAnimator animator = new FPSAnimator(window, FPS);
@@ -47,7 +49,10 @@ public class Window extends GLJPanel {
         });
     }
 
-    public Window(Renderer renderer) {
+
+    public Window(Renderer renderer, InputHandler inputHandler) {
+        addKeyListener(inputHandler);
         addGLEventListener(renderer);
     }
+
 }
