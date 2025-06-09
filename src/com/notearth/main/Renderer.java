@@ -23,7 +23,7 @@ public class Renderer implements GLEventListener {
 
     private GLU glu;
     private final InputHandler inputHandler;
-    private Camera camera;
+    private final Camera camera;
 
     private float angle = 0;
 
