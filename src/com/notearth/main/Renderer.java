@@ -11,6 +11,8 @@ public class Renderer implements GLEventListener {
 
     private GLU glu;
 
+    private float angle = 0;
+
     @Override
     public void init(GLAutoDrawable drawable) {
         glu = new GLU();
@@ -30,12 +32,14 @@ public class Renderer implements GLEventListener {
         gl.glLoadIdentity(); // Reset model view matrix
 
         gl.glTranslatef(0.0f, 0.0f, -6.0f);
+        gl.glRotatef(angle, 0.0f, 0.0f, 1.0f);
         gl.glBegin(GL.GL_TRIANGLES);
         gl.glVertex3f(1.0f, -1.0f, 0.0f);
         gl.glVertex3f(-1.0f, -1.0f, 0.0f);
         gl.glVertex3f(0.0f, 1.0f, 0.0f);
         gl.glEnd();
 
+        angle += 1f;
     }
 
     @Override
