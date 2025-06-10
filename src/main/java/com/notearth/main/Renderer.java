@@ -9,6 +9,7 @@ import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.math.Vec3f;
 import com.jogamp.opengl.util.texture.Texture;
 import com.notearth.inputHandler.InputHandler;
+import com.notearth.mesh.OBJLoader;
 import com.notearth.mesh.RawMeshBuilder;
 import com.notearth.texture.TextureLoader;
 
@@ -22,7 +23,7 @@ public class Renderer implements GLEventListener {
 
     private GLU glu;
     private final InputHandler input;
-    private Camera camera = null;
+    private final Camera camera;
 
     public Renderer(InputHandler input) {
         this.input = input;
@@ -46,11 +47,15 @@ public class Renderer implements GLEventListener {
     }
 
     RawMeshBuilder square;
+    OBJLoader objLoader = new OBJLoader();
     Texture nyanTexture;
 
     public void start(GL2 gl) {
 
-        nyanTexture = TextureLoader.loadTexture(gl, "nyan_cat.png");
+
+        objLoader.loadOBJ("low_poly_penguin");
+
+        nyanTexture = TextureLoader.loadTexture(gl, "textures/nyan_cat.png");
 
         float[] vertexData = {
                 1.0f, 1.0f, 0.0f, 1.0f, 1.0f,

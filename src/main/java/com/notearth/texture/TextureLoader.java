@@ -15,7 +15,7 @@ public class TextureLoader {
         Texture texture = null;
         try {
             texture = TextureIO.newTexture(
-                    Objects.requireNonNull(TextureLoader.class.getClassLoader().getResource(textureFileName)),
+                    Objects.requireNonNull(TextureLoader.class.getClassLoader().getResource("textures/" + textureFileName)),
                     true, textureFileName.split("\\.")[1]
             );
 
