@@ -7,11 +7,15 @@ import com.jogamp.opengl.GLEventListener;
 import com.jogamp.opengl.fixedfunc.GLMatrixFunc;
 import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.math.Vec3f;
+import com.jogamp.opengl.util.texture.Texture;
+import com.jogamp.opengl.util.texture.TextureIO;
 import com.notearth.inputHandler.InputHandler;
 import com.notearth.mesh.RawMeshBuilder;
 
-import static com.jogamp.opengl.GL.GL_DEPTH_BUFFER_BIT;
-import static com.jogamp.opengl.GL.GL_NICEST;
+import java.io.IOException;
+import java.util.Objects;
+
+import static com.jogamp.opengl.GL.*;
 import static com.jogamp.opengl.GL2ES1.GL_PERSPECTIVE_CORRECTION_HINT;
 import static com.jogamp.opengl.fixedfunc.GLLightingFunc.GL_SMOOTH;
 
@@ -36,6 +40,7 @@ public class Renderer implements GLEventListener {
         gl.glClearColor(0.3f, 0.45f, 0.1f, 0.0f);
         gl.glClearDepth(1.0f);
         gl.glEnable(GL.GL_DEPTH_TEST);
+        gl.glEnable(GL_CULL_FACE);
         gl.glDepthFunc(GL.GL_LEQUAL);
         gl.glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
         gl.glShadeModel(GL_SMOOTH);
@@ -44,17 +49,34 @@ public class Renderer implements GLEventListener {
     }
 
     RawMeshBuilder square;
+    Texture texture;
+
     public void start() {
+
+        try {
+            texture = TextureIO.newTexture(
+                    Objects.requireNonNull(getClass().getClassLoader().getResource("nyan_cat.png")),
+                    true, ".png"
+            );
+
+
+
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
+
         float[] vertexData = {
-                1.0f, 1.0f, 0.0f,
-                1.0f, -1.0f, 0.0f,
-                -1.0f, 1.0f, 0.0f,
-                -1.0f, -1.0f, 0.0f
+                1.0f, 1.0f, 0.0f, 1.0f, 1.0f,
+                1.0f, -1.0f, 0.0f, 1.0f, 0.0f,
+                -1.0f, 1.0f, 0.0f, 0.0f, 1.0f,
+                -1.0f, -1.0f, 0.0f, 0.0f, 0.0f
         };
+
         int[] indices = {
                 0, 2, 1,
                 1, 2, 3
         };
+
         square = new RawMeshBuilder(vertexData, indices);
     }
 
@@ -84,7 +106,7 @@ public class Renderer implements GLEventListener {
         camera.update();
         input(deltaTime);
 
-        square.render(gl);
+        square.render(gl, texture);
     }
 
     @Override
