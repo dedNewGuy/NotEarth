@@ -47,16 +47,22 @@ public class Renderer implements GLEventListener {
     }
 
     RawMeshBuilder square;
-    RawMeshBuilder penguin;
+    RawMeshBuilder wally;
+    RawMeshBuilder world;
     OBJLoader objLoader = new OBJLoader();
     Texture nyanTexture;
+    Texture wallyTexture;
+    Texture worldmapTexture;
 
     public void start(GL2 gl) {
 
 
-        penguin = objLoader.loadOBJ("low_poly_penguin");
+        wally = objLoader.loadOBJ("wally_uv");
+        world = objLoader.loadOBJ("world_planet");
 
         nyanTexture = TextureLoader.loadTexture(gl, "nyan_cat.png");
+        wallyTexture = TextureLoader.loadTexture(gl, "wally-color.png");
+        worldmapTexture = TextureLoader.loadTexture(gl, "worldmap.jpg");
 
         float[] vertexData = {
                 1.0f, 1.0f, 0.0f, 1.0f, 1.0f,
@@ -77,6 +83,8 @@ public class Renderer implements GLEventListener {
     public void dispose(GLAutoDrawable drawable) {
 
     }
+
+    float angle = 0;
 
     @Override
     public void display(GLAutoDrawable drawable) {
@@ -99,7 +107,9 @@ public class Renderer implements GLEventListener {
         camera.update();
         input(deltaTime);
 
-        penguin.render(gl, nyanTexture);
+        gl.glRotatef(angle, 0.0f, 1.0f, 0.0f);
+        world.render(gl, worldmapTexture);
+        angle += 0.5f;
     }
 
     @Override
