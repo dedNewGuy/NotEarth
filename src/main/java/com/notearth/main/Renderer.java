@@ -47,13 +47,14 @@ public class Renderer implements GLEventListener {
     }
 
     RawMeshBuilder square;
+    RawMeshBuilder penguin;
     OBJLoader objLoader = new OBJLoader();
     Texture nyanTexture;
 
     public void start(GL2 gl) {
 
 
-        objLoader.loadOBJ("low_poly_penguin");
+        penguin = objLoader.loadOBJ("low_poly_penguin");
 
         nyanTexture = TextureLoader.loadTexture(gl, "nyan_cat.png");
 
@@ -98,7 +99,7 @@ public class Renderer implements GLEventListener {
         camera.update();
         input(deltaTime);
 
-        square.render(gl, nyanTexture);
+        penguin.render(gl, nyanTexture);
     }
 
     @Override
