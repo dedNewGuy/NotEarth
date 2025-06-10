@@ -16,6 +16,7 @@ import static com.jogamp.opengl.fixedfunc.GLLightingFunc.GL_SMOOTH;
 
 public class Renderer implements GLEventListener {
 
+    private long lastFrameTime = System.nanoTime();
 
     private GLU glu;
     private final InputHandler input;
@@ -24,8 +25,7 @@ public class Renderer implements GLEventListener {
     public Renderer(InputHandler input) {
         this.input = input;
 
-        camera = new Camera(input, new Vec3f(0.0f, 0.0f, 6.0f));
-        System.out.println(camera.position.z());
+        camera = new Camera(input, new Vec3f(0.0f, 0.0f, 6.0f), 3.0f);
     }
 
     @Override
@@ -48,11 +48,14 @@ public class Renderer implements GLEventListener {
 
     @Override
     public void display(GLAutoDrawable drawable) {
+        long currentTime = System.nanoTime();
+        float deltaTime = (currentTime - lastFrameTime) / 1000000000.0f;
+
+        lastFrameTime = currentTime;
+
         GL2 gl = drawable.getGL().getGL2();
         gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         gl.glLoadIdentity(); // Reset model view matrix
-
-        camera.update();
 
         glu.gluLookAt(camera.position.x(), camera.position.y(), camera.position.z(),
                 camera.position.x() + camera.front.x(),
@@ -61,7 +64,8 @@ public class Renderer implements GLEventListener {
                 camera.up.x(), camera.up.y(), camera.up.z());
 
 
-        input();
+        camera.update();
+        input(deltaTime);
 
         gl.glBegin(GL.GL_TRIANGLES);
         // FRONT FACE
@@ -126,7 +130,6 @@ public class Renderer implements GLEventListener {
         gl.glVertex3f(-1.0f, -1.0f, 1.0f);
 
         gl.glEnd();
-
     }
 
     @Override
@@ -147,7 +150,7 @@ public class Renderer implements GLEventListener {
 
     }
 
-    private void input() {
-        camera.input();
+    private void input(float deltaTime) {
+        camera.input(deltaTime);
     }
 }

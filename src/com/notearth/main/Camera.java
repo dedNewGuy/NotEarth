@@ -17,11 +17,12 @@ public class Camera {
 
     public Vec3f front;
 
-    public float speed = 0.05f;
+    private float camSpeed;
 
-    public Camera(InputHandler input, Vec3f position) {
+    public Camera(InputHandler input, Vec3f position, float camSpeed) {
         this.inputHandler = input;
         this.position = position.copy();
+        this.camSpeed = camSpeed;
 
         target = new Vec3f(0.0f, 0.0f, 0.0f);
         direction = position.copy().sub(target).normalize();
@@ -34,7 +35,8 @@ public class Camera {
         front = new Vec3f(0.0f, 0.0f, -1.0f);
     }
 
-    public void input() {
+    public void input(float deltaTime) {
+        float speed = camSpeed * deltaTime;
         if (inputHandler.isWPressed) {
             position.add(front.mul(speed));
         }

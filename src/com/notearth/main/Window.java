@@ -17,6 +17,8 @@ public class Window extends GLJPanel {
 
     private static final int FPS = 60;
 
+
+
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
