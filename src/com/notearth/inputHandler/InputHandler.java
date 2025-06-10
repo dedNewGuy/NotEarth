@@ -18,6 +18,8 @@ public class InputHandler implements KeyListener {
     public boolean isSpacePressed = false;
     public boolean isShiftPressed = false;
 
+    public boolean isRPressed = false;
+
     @Override
     public void keyTyped(KeyEvent e) {
 
@@ -25,6 +27,9 @@ public class InputHandler implements KeyListener {
 
     @Override
     public void keyPressed(KeyEvent e) {
+        if (e.getKeyCode() == KeyEvent.VK_R) {
+            this.isRPressed = true;
+        }
         if (e.getKeyCode() == KeyEvent.VK_W) {
             this.isWPressed = true;
         }
@@ -96,6 +101,10 @@ public class InputHandler implements KeyListener {
 
         if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
             this.isRightPressed = false;
+        }
+
+        if (e.getKeyCode() == KeyEvent.VK_R) {
+            this.isRPressed = false;
         }
 
     }

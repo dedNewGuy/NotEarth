@@ -8,6 +8,7 @@ import com.jogamp.opengl.fixedfunc.GLMatrixFunc;
 import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.math.Vec3f;
 import com.notearth.inputHandler.InputHandler;
+import com.notearth.mesh.RawMeshBuilder;
 
 import static com.jogamp.opengl.GL.GL_DEPTH_BUFFER_BIT;
 import static com.jogamp.opengl.GL.GL_NICEST;
@@ -39,6 +40,22 @@ public class Renderer implements GLEventListener {
         gl.glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
         gl.glShadeModel(GL_SMOOTH);
 
+        start();
+    }
+
+    RawMeshBuilder square;
+    public void start() {
+        float[] vertexData = {
+                1.0f, 1.0f, 0.0f,
+                1.0f, -1.0f, 0.0f,
+                -1.0f, 1.0f, 0.0f,
+                -1.0f, -1.0f, 0.0f
+        };
+        int[] indices = {
+                0, 2, 1,
+                1, 2, 3
+        };
+        square = new RawMeshBuilder(vertexData, indices);
     }
 
     @Override
@@ -67,69 +84,7 @@ public class Renderer implements GLEventListener {
         camera.update();
         input(deltaTime);
 
-        gl.glBegin(GL.GL_TRIANGLES);
-        // FRONT FACE
-        gl.glColor3f(0.0f, 0.3f, 0.0f);
-        gl.glVertex3f(1.0f, 1.0f, 1.0f);
-        gl.glVertex3f(-1.0f, -1.0f, 1.0f);
-        gl.glVertex3f(1.0f, -1.0f, 1.0f);
-
-        gl.glVertex3f(-1.0f, 1.0f, 1.0f);
-        gl.glVertex3f(-1.0f, -1.0f, 1.0f);
-        gl.glVertex3f(1.0f, 1.0f, 1.0f);
-
-
-        // BACK FACE
-        gl.glColor3f(0.4f, 0.3f, 0.0f);
-        gl.glVertex3f(1.0f, 1.0f, -1.0f);
-        gl.glVertex3f(1.0f, -1.0f, -1.0f);
-        gl.glVertex3f(-1.0f, -1.0f, -1.0f);
-
-        gl.glVertex3f(-1.0f, 1.0f, -1.0f);
-        gl.glVertex3f(1.0f, 1.0f, -1.0f);
-        gl.glVertex3f(-1.0f, -1.0f, -1.0f);
-
-        // RIGHT FACE
-        gl.glColor3f(0.4f, 0.0f, 0.0f);
-        gl.glVertex3f(1.0f, -1.0f, -1.0f);
-        gl.glVertex3f(1.0f, 1.0f, -1.0f);
-        gl.glVertex3f(1.0f, -1.0f, 1.0f);
-
-        gl.glVertex3f(1.0f, -1.0f, 1.0f);
-        gl.glVertex3f(1.0f, 1.0f, -1.0f);
-        gl.glVertex3f(1.0f, 1.0f, 1.0f);
-
-        // LEFT FACE
-        gl.glColor3f(0.9f, 0.5f, 0.5f);
-        gl.glVertex3f(-1.0f, -1.0f, 1.0f);
-        gl.glVertex3f(-1.0f, 1.0f, 1.0f);
-        gl.glVertex3f(-1.0f, -1.0f, -1.0f);
-
-        gl.glVertex3f(-1.0f, -1.0f, -1.0f);
-        gl.glVertex3f(-1.0f, 1.0f, 1.0f);
-        gl.glVertex3f(-1.0f, 1.0f, -1.0f);
-
-        // TOP FACE
-        gl.glColor3f(0.0f, 0.0f, 0.5f);
-        gl.glVertex3f(1.0f, 1.0f, 1.0f);
-        gl.glVertex3f(1.0f, 1.0f, -1.0f);
-        gl.glVertex3f(-1.0f, 1.0f, 1.0f);
-
-        gl.glVertex3f(-1.0f, 1.0f, 1.0f);
-        gl.glVertex3f(1.0f, 1.0f, -1.0f);
-        gl.glVertex3f(-1.0f, 1.0f, -1.0f);
-
-        // BOTTOM FACE
-        gl.glColor3f(0.0f, 0.5f, 0.5f);
-        gl.glVertex3f(1.0f, -1.0f, -1.0f);
-        gl.glVertex3f(1.0f, -1.0f, 1.0f);
-        gl.glVertex3f(-1.0f, -1.0f, -1.0f);
-
-        gl.glVertex3f(-1.0f, -1.0f, -1.0f);
-        gl.glVertex3f(1.0f, -1.0f, 1.0f);
-        gl.glVertex3f(-1.0f, -1.0f, 1.0f);
-
-        gl.glEnd();
+        square.render(gl);
     }
 
     @Override

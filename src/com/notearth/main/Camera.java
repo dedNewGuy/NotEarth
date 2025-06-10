@@ -1,7 +1,6 @@
 package com.notearth.main;
 
 import com.jogamp.opengl.math.Vec3f;
-import com.jogamp.opengl.math.VectorUtil;
 import com.notearth.inputHandler.InputHandler;
 
 public class Camera {
