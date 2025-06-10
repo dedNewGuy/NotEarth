@@ -10,6 +10,11 @@ public class InputHandler implements KeyListener {
     public boolean isSPressed = false;
     public boolean isDPressed = false;
 
+    public boolean isUpPressed = false;
+    public boolean isLeftPressed = false;
+    public boolean isDownPressed = false;
+    public boolean isRightPressed = false;
+
     public boolean isSpacePressed = false;
     public boolean isShiftPressed = false;
 
@@ -38,6 +43,22 @@ public class InputHandler implements KeyListener {
         if (e.getKeyCode() == KeyEvent.VK_SHIFT) {
             this.isShiftPressed = true;
         }
+
+        if (e.getKeyCode() == KeyEvent.VK_UP) {
+            this.isUpPressed = true;
+        }
+
+        if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+            this.isLeftPressed = true;
+        }
+
+        if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+            this.isDownPressed = true;
+        }
+
+        if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+            this.isRightPressed = true;
+        }
     }
 
     @Override
@@ -60,5 +81,22 @@ public class InputHandler implements KeyListener {
         if (e.getKeyCode() == KeyEvent.VK_SHIFT) {
             this.isShiftPressed = false;
         }
+
+        if (e.getKeyCode() == KeyEvent.VK_UP) {
+            this.isUpPressed = false;
+        }
+
+        if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+            this.isLeftPressed = false;
+        }
+
+        if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+            this.isDownPressed = false;
+        }
+
+        if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+            this.isRightPressed = false;
+        }
+
     }
 }

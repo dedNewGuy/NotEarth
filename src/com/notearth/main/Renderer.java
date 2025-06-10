@@ -6,6 +6,7 @@ import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLEventListener;
 import com.jogamp.opengl.fixedfunc.GLMatrixFunc;
 import com.jogamp.opengl.glu.GLU;
+import com.jogamp.opengl.math.Vec3f;
 import com.notearth.inputHandler.InputHandler;
 
 import static com.jogamp.opengl.GL.GL_DEPTH_BUFFER_BIT;
@@ -15,24 +16,16 @@ import static com.jogamp.opengl.fixedfunc.GLLightingFunc.GL_SMOOTH;
 
 public class Renderer implements GLEventListener {
 
-    private static class Camera {
-        public float x, y, z;
-        public float speed;
-        public Camera(float x, float y, float z, float speed) {
-            this.x = x;
-            this.y = y;
-            this.z = z;
-            this.speed = speed;
-        }
-    }
 
     private GLU glu;
-    private final InputHandler inputHandler;
-    private final Camera camera;
+    private final InputHandler input;
+    private Camera camera = null;
 
     public Renderer(InputHandler input) {
-        this.inputHandler = input;
-        camera = new Camera(0.0f, 0.0f, -6.0f, 0.2f);
+        this.input = input;
+
+        camera = new Camera(input, new Vec3f(0.0f, 0.0f, 6.0f));
+        System.out.println(camera.position.z());
     }
 
     @Override
@@ -42,10 +35,10 @@ public class Renderer implements GLEventListener {
         gl.glClearColor(0.3f, 0.45f, 0.1f, 0.0f);
         gl.glClearDepth(1.0f);
         gl.glEnable(GL.GL_DEPTH_TEST);
-        gl.glEnable(GL.GL_CULL_FACE);
         gl.glDepthFunc(GL.GL_LEQUAL);
         gl.glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
         gl.glShadeModel(GL_SMOOTH);
+
     }
 
     @Override
@@ -59,9 +52,17 @@ public class Renderer implements GLEventListener {
         gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         gl.glLoadIdentity(); // Reset model view matrix
 
+        camera.update();
+
+        glu.gluLookAt(camera.position.x(), camera.position.y(), camera.position.z(),
+                camera.position.x() + camera.front.x(),
+                camera.position.y() + camera.front.y(),
+                camera.position.z() + camera.front.z(),
+                camera.up.x(), camera.up.y(), camera.up.z());
+
+
         input();
 
-        gl.glTranslatef(camera.x, camera.y, camera.z);
         gl.glBegin(GL.GL_TRIANGLES);
         // FRONT FACE
         gl.glColor3f(0.0f, 0.3f, 0.0f);
@@ -77,12 +78,12 @@ public class Renderer implements GLEventListener {
         // BACK FACE
         gl.glColor3f(0.4f, 0.3f, 0.0f);
         gl.glVertex3f(1.0f, 1.0f, -1.0f);
-        gl.glVertex3f(-1.0f, -1.0f, -1.0f);
         gl.glVertex3f(1.0f, -1.0f, -1.0f);
+        gl.glVertex3f(-1.0f, -1.0f, -1.0f);
 
         gl.glVertex3f(-1.0f, 1.0f, -1.0f);
-        gl.glVertex3f(-1.0f, -1.0f, -1.0f);
         gl.glVertex3f(1.0f, 1.0f, -1.0f);
+        gl.glVertex3f(-1.0f, -1.0f, -1.0f);
 
         // RIGHT FACE
         gl.glColor3f(0.4f, 0.0f, 0.0f);
@@ -147,23 +148,6 @@ public class Renderer implements GLEventListener {
     }
 
     private void input() {
-        if (this.inputHandler.isWPressed) {
-            camera.z += camera.speed;
-        }
-        if (this.inputHandler.isAPressed) {
-            camera.x += camera.speed;
-        }
-        if (this.inputHandler.isSPressed) {
-            camera.z += -camera.speed;
-        }
-        if (this.inputHandler.isDPressed) {
-            camera.x += -camera.speed;
-        }
-        if (this.inputHandler.isSpacePressed) {
-            camera.y += -camera.speed;
-        }
-        if (this.inputHandler.isShiftPressed) {
-            camera.y += camera.speed;
-        }
+        camera.input();
     }
 }
