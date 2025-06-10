@@ -8,12 +8,9 @@ import com.jogamp.opengl.fixedfunc.GLMatrixFunc;
 import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.math.Vec3f;
 import com.jogamp.opengl.util.texture.Texture;
-import com.jogamp.opengl.util.texture.TextureIO;
 import com.notearth.inputHandler.InputHandler;
 import com.notearth.mesh.RawMeshBuilder;
-
-import java.io.IOException;
-import java.util.Objects;
+import com.notearth.texture.TextureLoader;
 
 import static com.jogamp.opengl.GL.*;
 import static com.jogamp.opengl.GL2ES1.GL_PERSPECTIVE_CORRECTION_HINT;
@@ -45,25 +42,15 @@ public class Renderer implements GLEventListener {
         gl.glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
         gl.glShadeModel(GL_SMOOTH);
 
-        start();
+        start(gl);
     }
 
     RawMeshBuilder square;
-    Texture texture;
+    Texture nyanTexture;
 
-    public void start() {
+    public void start(GL2 gl) {
 
-        try {
-            texture = TextureIO.newTexture(
-                    Objects.requireNonNull(getClass().getClassLoader().getResource("nyan_cat.png")),
-                    true, ".png"
-            );
-
-
-
-        } catch(IOException e) {
-            e.printStackTrace();
-        }
+        nyanTexture = TextureLoader.loadTexture(gl, "nyan_cat.png");
 
         float[] vertexData = {
                 1.0f, 1.0f, 0.0f, 1.0f, 1.0f,
@@ -106,7 +93,7 @@ public class Renderer implements GLEventListener {
         camera.update();
         input(deltaTime);
 
-        square.render(gl, texture);
+        square.render(gl, nyanTexture);
     }
 
     @Override
