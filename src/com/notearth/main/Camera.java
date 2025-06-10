@@ -19,6 +19,8 @@ public class Camera {
 
     private float camSpeed;
 
+    private double yaw = -90.0, pitch = 0;
+
     public Camera(InputHandler input, Vec3f position, float camSpeed) {
         this.inputHandler = input;
         this.position = position.copy();
@@ -49,8 +51,31 @@ public class Camera {
         if (inputHandler.isDPressed) {
             position.add(front.cross(up).normalize().mul(speed));
         }
+        if (inputHandler.isShiftPressed) {
+            position.sub(new Vec3f(0.0f, speed, 0.0f));
+        }
+        if (inputHandler.isSpacePressed) {
+            position.add(new Vec3f(0.0f, speed, 0.0f));
+        }
+
+        if (inputHandler.isLeftPressed) {
+            yaw -= camSpeed;
+        }
+        if (inputHandler.isRightPressed) {
+            yaw += camSpeed;
+        }
+        if (inputHandler.isUpPressed) {
+            pitch += camSpeed;
+        }
+        if (inputHandler.isDownPressed) {
+            pitch -= camSpeed;
+        }
     }
 
     public void update() {
+        direction.setX((float) Math.cos(Math.toRadians(yaw)) * (float)Math.cos(Math.toRadians(pitch)));
+        direction.setY((float) Math.sin(Math.toRadians(pitch)));
+        direction.setZ((float) Math.sin(Math.toRadians(yaw)) * (float)Math.cos(Math.toRadians(pitch)));
+        front = direction.copy().normalize();
     }
 }
