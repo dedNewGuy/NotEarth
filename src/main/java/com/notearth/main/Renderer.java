@@ -55,7 +55,7 @@ public class Renderer implements GLEventListener {
 
         objLoader.loadOBJ("low_poly_penguin");
 
-        nyanTexture = TextureLoader.loadTexture(gl, "textures/nyan_cat.png");
+        nyanTexture = TextureLoader.loadTexture(gl, "nyan_cat.png");
 
         float[] vertexData = {
                 1.0f, 1.0f, 0.0f, 1.0f, 1.0f,
