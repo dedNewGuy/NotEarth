@@ -49,20 +49,24 @@ public class Renderer implements GLEventListener {
     RawMeshBuilder square;
     RawMeshBuilder wally;
     RawMeshBuilder world;
+    RawMeshBuilder bunny;
     OBJLoader objLoader = new OBJLoader();
     Texture nyanTexture;
     Texture wallyTexture;
     Texture worldmapTexture;
+    Texture yellow;
 
     public void start(GL2 gl) {
 
 
         wally = objLoader.loadOBJ("wally_uv");
         world = objLoader.loadOBJ("world_planet");
+        bunny = objLoader.loadOBJ("stanford-bunny");
 
         nyanTexture = TextureLoader.loadTexture(gl, "nyan_cat.png");
         wallyTexture = TextureLoader.loadTexture(gl, "wally-color.png");
         worldmapTexture = TextureLoader.loadTexture(gl, "worldmap.jpg");
+        yellow = TextureLoader.loadTexture(gl, "yellow.png");
 
         float[] vertexData = {
                 1.0f, 1.0f, 0.0f, 1.0f, 1.0f,
@@ -108,7 +112,8 @@ public class Renderer implements GLEventListener {
         input(deltaTime);
 
         gl.glRotatef(angle, 0.0f, 1.0f, 0.0f);
-        world.render(gl, worldmapTexture);
+        gl.glScalef(8.0f, 8.0f, 8.0f);
+        bunny.render(gl, yellow);
         angle += 0.5f;
     }
 
