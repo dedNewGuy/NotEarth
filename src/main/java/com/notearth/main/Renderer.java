@@ -58,6 +58,8 @@ public class Renderer implements GLEventListener {
 
     public void start(GL2 gl) {
 
+        Light sun = new Light(gl, new Vec3f(100f, 100f, 100f));
+        sun.enable(gl);
 
         wally = objLoader.loadOBJ("wally_uv");
         world = objLoader.loadOBJ("world_planet");

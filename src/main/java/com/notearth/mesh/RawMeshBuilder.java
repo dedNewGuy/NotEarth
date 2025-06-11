@@ -4,6 +4,8 @@ import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.util.texture.Texture;
 
+import static com.jogamp.opengl.fixedfunc.GLLightingFunc.GL_LIGHTING;
+
 public class RawMeshBuilder {
 
     private final float[] vertexData;
@@ -20,7 +22,7 @@ public class RawMeshBuilder {
 
         gl.glBegin(GL.GL_TRIANGLES);
         for (int index : indices) {
-            int vertexIdx = index * 5;
+            int vertexIdx = index * 8;
             float x = vertexData[vertexIdx];
             float y = vertexData[vertexIdx + 1];
             float z = vertexData[vertexIdx + 2];
@@ -28,6 +30,11 @@ public class RawMeshBuilder {
             float u = vertexData[vertexIdx + 3];
             float v = vertexData[vertexIdx + 4];
 
+            float nx = vertexData[vertexIdx + 5];
+            float ny = vertexData[vertexIdx + 6];
+            float nz = vertexData[vertexIdx + 7];
+
+            gl.glNormal3f(nx, ny, nz);
             gl.glTexCoord2f(u, v);
             gl.glVertex3f(x, y, z);
         }

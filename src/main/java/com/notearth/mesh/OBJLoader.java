@@ -1,5 +1,6 @@
 package com.notearth.mesh;
 
+import com.notearth.data.NormalCoordinate;
 import com.notearth.data.TextureCoordinate;
 import com.notearth.data.Vertex;
 
@@ -20,6 +21,7 @@ public class OBJLoader {
 
         List<Vertex> vertexList = new ArrayList<>();
         List<TextureCoordinate> textureCoordinates = new ArrayList<>();
+        List<NormalCoordinate> normalCoordinates = new ArrayList<>();
         List<Integer> indices = new ArrayList<>();
         Map<Integer, float[]> vertexData = new HashMap<>();
 
@@ -34,6 +36,13 @@ public class OBJLoader {
                     float v = Float.parseFloat(String.valueOf(texCoords[2]));
                     TextureCoordinate coord = new TextureCoordinate(u, v);
                     textureCoordinates.add(coord);
+                } else if (st.startsWith("vn")) {
+                    String[] normals = st.split(" ");
+                    float nx = Float.parseFloat(String.valueOf(normals[1]));
+                    float ny = Float.parseFloat(String.valueOf(normals[2]));
+                    float nz = Float.parseFloat(String.valueOf(normals[3]));
+                    NormalCoordinate normal = new NormalCoordinate(nx, ny, nz);
+                    normalCoordinates.add(normal);
                 } else if (st.startsWith("v")) {
                     String[] vertices = st.split(" ");
                     float x = Float.parseFloat(String.valueOf(vertices[1]));
@@ -54,7 +63,8 @@ public class OBJLoader {
                     String[] second = faces[2].split("/");
                     String[] third = faces[3].split("/");
 
-                    processVertex(vertexList, textureCoordinates, indices, vertexData, first, second, third);
+                    processVertex(vertexList, textureCoordinates, normalCoordinates,
+                            indices, vertexData, first, second, third);
 
                 }
 
@@ -73,20 +83,29 @@ public class OBJLoader {
         float[] vertexDataArray = new float[indices.size() * 2];
 
         for (int idx: vertexData.keySet()) {
-            int index = idx * 5;
+            int index = idx * 8;
             float[] data = vertexData.get(idx);
+            // Vertices
             vertexDataArray[index] = data[0];
             vertexDataArray[index + 1] = data[1];
             vertexDataArray[index + 2] = data[2];
+
+            // Texture Coordinates
             vertexDataArray[index + 3] = data[3];
             vertexDataArray[index + 4] = data[4];
+
+            // Normal Coordinates
+            vertexDataArray[index + 5] = data[5];
+            vertexDataArray[index + 6] = data[6];
+            vertexDataArray[index + 7] = data[7];
         }
 
         return new RawMeshBuilder(vertexDataArray, indicesArray);
     }
 
     private void processVertex(List<Vertex> vertexList, List<TextureCoordinate> textureCoordinates,
-                             List<Integer> indices, Map<Integer, float[]> vertexData,
+                             List<NormalCoordinate> normalCoordinates, List<Integer> indices,
+                               Map<Integer, float[]> vertexData,
                              String[] first, String[] second, String[] third) {
         int firstIndex = Integer.parseInt(String.valueOf(first[0])) - 1;
         int secondIndex = Integer.parseInt(String.valueOf(second[0])) - 1;
@@ -96,23 +115,39 @@ public class OBJLoader {
         int secondTexIndex = Integer.parseInt(String.valueOf(second[1])) - 1;
         int thirdTexIndex = Integer.parseInt(String.valueOf(third[1])) - 1;
 
+        int firstNormsIndex = Integer.parseInt(String.valueOf(first[2])) - 1;
+        int secondNormsIndex = Integer.parseInt(String.valueOf(second[2])) - 1;
+        int thirdNormsIndex = Integer.parseInt(String.valueOf(third[2])) - 1;
+
         indices.add(firstIndex);
         indices.add(secondIndex);
         indices.add(thirdIndex);
 
         Vertex firstVertex = vertexList.get(firstIndex);
         TextureCoordinate firstTex = textureCoordinates.get(firstTexIndex);
-        float[] firstVertexData = {firstVertex.x, firstVertex.y, firstVertex.z, firstTex.u, firstTex.v};
+        NormalCoordinate firstNormal = normalCoordinates.get(firstNormsIndex);
+        float[] firstVertexData = {firstVertex.x, firstVertex.y, firstVertex.z,
+                firstTex.u, firstTex.v,
+                firstNormal.nx, firstNormal.ny, firstNormal.nz
+        };
         vertexData.put(firstIndex, firstVertexData);
 
         Vertex secondVertex = vertexList.get(secondIndex);
         TextureCoordinate secondTex = textureCoordinates.get(secondTexIndex);
-        float[] secondVertexData = {secondVertex.x, secondVertex.y, secondVertex.z, secondTex.u, secondTex.v};
+        NormalCoordinate secondNormal = normalCoordinates.get(secondNormsIndex);
+        float[] secondVertexData = {secondVertex.x, secondVertex.y, secondVertex.z,
+                secondTex.u, secondTex.v,
+                secondNormal.nx, secondNormal.ny, secondNormal.nz
+        };
         vertexData.put(secondIndex, secondVertexData);
 
         Vertex thirdVertex = vertexList.get(thirdIndex);
         TextureCoordinate thirdTex = textureCoordinates.get(thirdTexIndex);
-        float[] thirdVertexData = {thirdVertex.x, thirdVertex.y, thirdVertex.z, thirdTex.u, thirdTex.v};
+        NormalCoordinate thirdNormal = normalCoordinates.get(thirdNormsIndex);
+        float[] thirdVertexData = {thirdVertex.x, thirdVertex.y, thirdVertex.z,
+                thirdTex.u, thirdTex.v,
+                thirdNormal.nx, thirdNormal.ny, thirdNormal.nz
+        };
         vertexData.put(thirdIndex, thirdVertexData);
 
     }
