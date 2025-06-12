@@ -73,7 +73,6 @@ public class Renderer implements GLEventListener {
 
         Mesh bunnyMesh = objLoader.loadOBJ("stanford-bunny");
         bunny = new Entity(gl, bunnyMesh, "yellow.png", new Vec3f(0.0f, 0.0f, 0.0f));
-
     }
 
     @Override
@@ -104,9 +103,10 @@ public class Renderer implements GLEventListener {
         camera.update();
         input(deltaTime);
 
+        bunny.rotateLocal(angle, new Vec3f(0.0f, 1.0f, 0.0f));
         bunny.render();
 
-        angle += 0.5f;
+        angle += 25f * deltaTime;
     }
 
     @Override

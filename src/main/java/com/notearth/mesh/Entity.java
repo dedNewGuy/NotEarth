@@ -25,6 +25,24 @@ public class Entity {
         this.position = position.copy();
     }
 
+    /**
+     * Rotate local is a function to rotate model around local axis instead of world axis
+     * Use orbitAround to orbitAround specific axis
+     * @param angle angle of rotation in degree
+     * @param axis specify which axis to rotate around
+     */
+    public void rotateLocal(float angle, Vec3f axis) {
+        axis.normalize();
+        rotate.set(angle, axis.x(), axis.y(), axis.z());
+    }
+
+    public void translate(float x, float y, float z) {
+        position.add(new Vec3f(x, y, z));
+    }
+
+    public void scale(float scalar) {
+        scale.scale(scalar);
+    }
     private void update() {
         gl.glPushMatrix();
         gl.glScalef(scale.x(), scale.y(), scale.z());
