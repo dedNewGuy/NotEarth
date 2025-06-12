@@ -14,6 +14,7 @@ import com.notearth.mesh.Mesh;
 
 import static com.jogamp.opengl.GL.*;
 import static com.jogamp.opengl.GL2ES1.GL_PERSPECTIVE_CORRECTION_HINT;
+import static com.jogamp.opengl.GL2ES1.GL_RESCALE_NORMAL;
 import static com.jogamp.opengl.fixedfunc.GLLightingFunc.GL_SMOOTH;
 
 public class Renderer implements GLEventListener {
@@ -37,6 +38,7 @@ public class Renderer implements GLEventListener {
         gl.glClearColor(0.5f, 0.5f, 1.0f, 0.0f);
         gl.glClearDepth(1.0f);
         gl.glEnable(GL.GL_DEPTH_TEST);
+        gl.glEnable(GL_RESCALE_NORMAL); // I enable this so scaling will also rescale the normal otherwise lighting will be off
         gl.glEnable(GL_CULL_FACE);
         gl.glDepthFunc(GL.GL_LEQUAL);
         gl.glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
@@ -73,6 +75,7 @@ public class Renderer implements GLEventListener {
 
         Mesh bunnyMesh = objLoader.loadOBJ("stanford-bunny");
         bunny = new Entity(gl, bunnyMesh, "yellow.png", new Vec3f(0.0f, 0.0f, 0.0f));
+        bunny.scale(8.0f);
     }
 
     @Override
@@ -81,6 +84,8 @@ public class Renderer implements GLEventListener {
     }
 
     float angle = 0;
+    float bunnyY = 0;
+    float bunnyAngle = 0;
 
     @Override
     public void display(GLAutoDrawable drawable) {
@@ -104,9 +109,13 @@ public class Renderer implements GLEventListener {
         input(deltaTime);
 
         bunny.rotateLocal(angle, new Vec3f(0.0f, 1.0f, 0.0f));
+        bunnyY = 0.2f * (float)Math.sin(Math.toRadians(bunnyAngle));
+        bunny.setPosition(bunny.position.x(), bunnyY, bunny.position.z());
         bunny.render();
 
-        angle += 25f * deltaTime;
+        // I use this instead of angle += 25f * deltaTime to avoid potential precision error and to make life easier in the future
+        angle = (angle + 25f * deltaTime) % 360;
+        bunnyAngle = (bunnyAngle + 60 * deltaTime) % 360;
     }
 
     @Override

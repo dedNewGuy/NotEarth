@@ -13,7 +13,7 @@ public class Entity {
     Mesh mesh;
     GL2 gl;
 
-    Vec3f position;
+    public Vec3f position;
     Vec3f scale = new Vec3f(1.0f, 1.0f, 1.0f);
     Vec4f rotate = new Vec4f(0.0f, 0.0f, 0.0f, 0.0f);
 
@@ -36,6 +36,10 @@ public class Entity {
         rotate.set(angle, axis.x(), axis.y(), axis.z());
     }
 
+    public void setPosition(float x, float y, float z) {
+        position.set(x, y ,z);
+    }
+
     public void translate(float x, float y, float z) {
         position.add(new Vec3f(x, y, z));
     }
@@ -43,6 +47,7 @@ public class Entity {
     public void scale(float scalar) {
         scale.scale(scalar);
     }
+
     private void update() {
         gl.glPushMatrix();
         gl.glScalef(scale.x(), scale.y(), scale.z());
