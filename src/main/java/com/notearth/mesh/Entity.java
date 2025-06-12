@@ -2,6 +2,8 @@ package com.notearth.mesh;
 
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
+import com.jogamp.opengl.math.Vec3f;
+import com.jogamp.opengl.math.Vec4f;
 import com.jogamp.opengl.util.texture.Texture;
 import com.notearth.texture.TextureLoader;
 
@@ -11,16 +13,30 @@ public class Entity {
     Mesh mesh;
     GL2 gl;
 
-    public Entity(GL2 gl, Mesh mesh, String textureFilename) {
+    Vec3f position;
+    Vec3f scale = new Vec3f(1.0f, 1.0f, 1.0f);
+    Vec4f rotate = new Vec4f(0.0f, 0.0f, 0.0f, 0.0f);
+
+    public Entity(GL2 gl, Mesh mesh, String textureFilename, Vec3f position) {
         this.gl = gl;
         this.mesh = mesh;
         texture = TextureLoader.loadTexture(gl, textureFilename);
+
+        this.position = position.copy();
+    }
+
+    private void update() {
+        gl.glPushMatrix();
+        gl.glScalef(scale.x(), scale.y(), scale.z());
+        gl.glTranslatef(position.x(), position.y(), position.z());
+        gl.glRotatef(rotate.x(), rotate.y(), rotate.z(), rotate.w());
     }
 
     public void render() {
         texture.enable(gl);
         texture.bind(gl);
 
+        update();
         gl.glBegin(GL.GL_TRIANGLES);
         for (int index : mesh.indices) {
             int vertexIdx = index * 8;
@@ -40,5 +56,6 @@ public class Entity {
             gl.glVertex3f(x, y, z);
         }
         gl.glEnd();
+        gl.glPopMatrix();
     }
 }

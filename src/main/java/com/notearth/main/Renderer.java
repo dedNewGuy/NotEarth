@@ -27,7 +27,7 @@ public class Renderer implements GLEventListener {
     public Renderer(InputHandler input) {
         this.input = input;
 
-        camera = new Camera(input, new Vec3f(0.0f, 0.0f, 10.0f), 3.0f);
+        camera = new Camera(input, new Vec3f(0.0f, 0.0f, 10.0f), 1.5f);
     }
 
     @Override
@@ -72,7 +72,7 @@ public class Renderer implements GLEventListener {
 //        square = new Mesh(vertexData, indices);
 
         Mesh bunnyMesh = objLoader.loadOBJ("stanford-bunny");
-        bunny = new Entity(gl, bunnyMesh, "yellow.png");
+        bunny = new Entity(gl, bunnyMesh, "yellow.png", new Vec3f(0.0f, 0.0f, 0.0f));
 
     }
 
@@ -104,9 +104,6 @@ public class Renderer implements GLEventListener {
         camera.update();
         input(deltaTime);
 
-        gl.glTranslatef(0.0f, -2.5f, 0.0f);
-        gl.glRotatef(angle, 0.0f, 1.0f, 0.0f);
-        gl.glScalef(20.0f, 20.0f, 20.0f);
         bunny.render();
 
         angle += 0.5f;
