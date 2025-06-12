@@ -21,15 +21,22 @@ Model should be exported as wavefront obj. OBJ file should be placed
 in `resources/models` folder. Texture should be in `resources/textures` folder.
 Use OBJLoader class to load an OBJ file.
 
+> [!IMPORTANT]
+> Entity class will load the texture for you. You only have to pass file name
+
 ```declarative
 OBJLoader objLoader = new OBJLoader();
-RawMeshBuilder car;
+Mesh car;
 
-car = objLoader.loadObj("mymodel");
+carMesh = objLoader.loadObj("mymodel");
+
+// Entity(GL2, Mesh, String, Vec3f) gl, mesh, texture file name, position
+Entity car = new Entity(gl, carMesh, "mytexture.png", new Vec3f(0.0f, 0.0f, 0.0f));
 
 // In display function can be used as
-// Apply translation (gl.glTranslate) or rotation (gl.glRotate) here 
-car.render(gl, myTexture);
+car.render();
+
+// more can refer to example in code
 ```
 
 > [!WARNING]
