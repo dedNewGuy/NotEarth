@@ -11,6 +11,7 @@ import com.notearth.inputHandler.InputHandler;
 import com.notearth.mesh.Entity;
 import com.notearth.mesh.OBJLoader;
 import com.notearth.mesh.Mesh;
+import com.notearth.mesh.Plane;
 
 import static com.jogamp.opengl.GL.*;
 import static com.jogamp.opengl.GL2ES1.GL_PERSPECTIVE_CORRECTION_HINT;
@@ -39,7 +40,6 @@ public class Renderer implements GLEventListener {
         gl.glClearDepth(1.0f);
         gl.glEnable(GL.GL_DEPTH_TEST);
         gl.glEnable(GL_RESCALE_NORMAL); // I enable this so scaling will also rescale the normal otherwise lighting will be off
-        gl.glEnable(GL_CULL_FACE);
         gl.glDepthFunc(GL.GL_LEQUAL);
         gl.glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
         gl.glShadeModel(GL_SMOOTH);
@@ -50,7 +50,7 @@ public class Renderer implements GLEventListener {
     OBJLoader objLoader = new OBJLoader();
 
     // Entity
-    Entity bunny;
+    Entity bunny, plane;
 
     public void start(GL2 gl) {
 
@@ -58,7 +58,7 @@ public class Renderer implements GLEventListener {
         Light sun = new Light(gl, new Vec3f(100f, 100f, 100f));
         sun.enable(gl);
 
-        // How to use Mesh alone to create object
+        // How to use Mesh alone to create object (I replicate openGL core profile mode design)
 //        float[] vertexData = {
 //                1.0f, 1.0f, 0.0f, 1.0f, 1.0f,
 //                1.0f, -1.0f, 0.0f, 1.0f, 0.0f,
@@ -76,6 +76,11 @@ public class Renderer implements GLEventListener {
         Mesh bunnyMesh = objLoader.loadOBJ("stanford-bunny");
         bunny = new Entity(gl, bunnyMesh, "yellow.png", new Vec3f(0.0f, 0.0f, 0.0f));
         bunny.scale(8.0f);
+
+        Plane plane1 = new Plane(new Vec3f(-5.0f, -2.0f, -3.0f), 10, 10, 8);
+        Mesh planeMesh = plane1.getMesh();
+        plane = new Entity(gl, planeMesh, "grass3.jpg", new Vec3f(0.0f, 0.0f, 0.0f), GL_REPEAT);
+
     }
 
     @Override
@@ -98,6 +103,7 @@ public class Renderer implements GLEventListener {
         gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         gl.glLoadIdentity(); // Reset model view matrix
 
+
         glu.gluLookAt(camera.position.x(), camera.position.y(), camera.position.z(),
                 camera.position.x() + camera.front.x(),
                 camera.position.y() + camera.front.y(),
@@ -111,7 +117,8 @@ public class Renderer implements GLEventListener {
         bunny.rotateLocal(angle, new Vec3f(0.0f, 1.0f, 0.0f));
         bunnyY = 0.2f * (float)Math.sin(Math.toRadians(bunnyAngle));
         bunny.setPosition(bunny.position.x(), bunnyY, bunny.position.z());
-        bunny.render();
+
+        plane.render();
 
         // I use this instead of angle += 25f * deltaTime to avoid potential precision error and to make life easier in the future
         angle = (angle + 25f * deltaTime) % 360;
