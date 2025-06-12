@@ -7,11 +7,10 @@ import com.jogamp.opengl.GLEventListener;
 import com.jogamp.opengl.fixedfunc.GLMatrixFunc;
 import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.math.Vec3f;
-import com.jogamp.opengl.util.texture.Texture;
 import com.notearth.inputHandler.InputHandler;
+import com.notearth.mesh.Entity;
 import com.notearth.mesh.OBJLoader;
-import com.notearth.mesh.RawMeshBuilder;
-import com.notearth.texture.TextureLoader;
+import com.notearth.mesh.Mesh;
 
 import static com.jogamp.opengl.GL.*;
 import static com.jogamp.opengl.GL2ES1.GL_PERSPECTIVE_CORRECTION_HINT;
@@ -28,14 +27,14 @@ public class Renderer implements GLEventListener {
     public Renderer(InputHandler input) {
         this.input = input;
 
-        camera = new Camera(input, new Vec3f(0.0f, 0.0f, 6.0f), 3.0f);
+        camera = new Camera(input, new Vec3f(0.0f, 0.0f, 10.0f), 3.0f);
     }
 
     @Override
     public void init(GLAutoDrawable drawable) {
         glu = new GLU();
         GL2 gl = drawable.getGL().getGL2();
-        gl.glClearColor(0.3f, 0.45f, 0.1f, 0.0f);
+        gl.glClearColor(0.5f, 0.5f, 1.0f, 0.0f);
         gl.glClearDepth(1.0f);
         gl.glEnable(GL.GL_DEPTH_TEST);
         gl.glEnable(GL_CULL_FACE);
@@ -46,43 +45,35 @@ public class Renderer implements GLEventListener {
         start(gl);
     }
 
-    RawMeshBuilder square;
-    RawMeshBuilder wally;
-    RawMeshBuilder world;
-    RawMeshBuilder bunny;
     OBJLoader objLoader = new OBJLoader();
-    Texture nyanTexture;
-    Texture wallyTexture;
-    Texture worldmapTexture;
-    Texture yellow;
+
+    // Entity
+    Entity bunny;
 
     public void start(GL2 gl) {
 
+        // Light
         Light sun = new Light(gl, new Vec3f(100f, 100f, 100f));
         sun.enable(gl);
 
-        wally = objLoader.loadOBJ("wally_uv");
-        world = objLoader.loadOBJ("world_planet");
-        bunny = objLoader.loadOBJ("stanford-bunny");
+        // How to use Mesh alone to create object
+//        float[] vertexData = {
+//                1.0f, 1.0f, 0.0f, 1.0f, 1.0f,
+//                1.0f, -1.0f, 0.0f, 1.0f, 0.0f,
+//                -1.0f, 1.0f, 0.0f, 0.0f, 1.0f,
+//                -1.0f, -1.0f, 0.0f, 0.0f, 0.0f
+//        };
+//
+//        int[] indices = {
+//                0, 2, 1,
+//                1, 2, 3
+//        };
+//
+//        square = new Mesh(vertexData, indices);
 
-        nyanTexture = TextureLoader.loadTexture(gl, "nyan_cat.png");
-        wallyTexture = TextureLoader.loadTexture(gl, "wally-color.png");
-        worldmapTexture = TextureLoader.loadTexture(gl, "worldmap.jpg");
-        yellow = TextureLoader.loadTexture(gl, "yellow.png");
+        Mesh bunnyMesh = objLoader.loadOBJ("stanford-bunny");
+        bunny = new Entity(gl, bunnyMesh, "yellow.png");
 
-        float[] vertexData = {
-                1.0f, 1.0f, 0.0f, 1.0f, 1.0f,
-                1.0f, -1.0f, 0.0f, 1.0f, 0.0f,
-                -1.0f, 1.0f, 0.0f, 0.0f, 1.0f,
-                -1.0f, -1.0f, 0.0f, 0.0f, 0.0f
-        };
-
-        int[] indices = {
-                0, 2, 1,
-                1, 2, 3
-        };
-
-        square = new RawMeshBuilder(vertexData, indices);
     }
 
     @Override
@@ -113,9 +104,11 @@ public class Renderer implements GLEventListener {
         camera.update();
         input(deltaTime);
 
+        gl.glTranslatef(0.0f, -2.5f, 0.0f);
         gl.glRotatef(angle, 0.0f, 1.0f, 0.0f);
-        gl.glScalef(8.0f, 8.0f, 8.0f);
-        bunny.render(gl, yellow);
+        gl.glScalef(20.0f, 20.0f, 20.0f);
+        bunny.render();
+
         angle += 0.5f;
     }
 

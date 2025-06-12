@@ -11,7 +11,7 @@ import java.util.*;
 public class OBJLoader {
 
 
-    public RawMeshBuilder loadOBJ(String filename) {
+    public Mesh loadOBJ(String filename) {
         File file = null;
         try {
             file = new File(Objects.requireNonNull(getClass().getClassLoader().getResource("models/" + filename + ".obj")).toURI());
@@ -100,7 +100,7 @@ public class OBJLoader {
             vertexDataArray[index + 7] = data[7];
         }
 
-        return new RawMeshBuilder(vertexDataArray, indicesArray);
+        return new Mesh(vertexDataArray, indicesArray);
     }
 
     private void processVertex(List<Vertex> vertexList, List<TextureCoordinate> textureCoordinates,
