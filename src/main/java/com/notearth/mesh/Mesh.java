@@ -10,4 +10,15 @@ public class Mesh {
         this.indices = indices;
     }
 
+    public void addToVertexData(int index, float value) {
+        vertexData[index] += value;
+    }
+
+    public float[] getVertexData() {
+        return vertexData;
+    }
+
+    public int[] getIndices() {
+        return indices;
+    }
 }
