@@ -14,12 +14,14 @@ import com.notearth.mesh.Mesh;
 import com.notearth.mesh.Plane;
 import com.notearth.terrain.Terrain;
 
+import java.nio.FloatBuffer;
+
 import static com.jogamp.opengl.GL.*;
 import static com.jogamp.opengl.GL2ES1.GL_PERSPECTIVE_CORRECTION_HINT;
 import static com.jogamp.opengl.GL2ES1.GL_RESCALE_NORMAL;
 import static com.jogamp.opengl.GL2GL3.GL_FILL;
 import static com.jogamp.opengl.GL2GL3.GL_LINE;
-import static com.jogamp.opengl.fixedfunc.GLLightingFunc.GL_SMOOTH;
+import static com.jogamp.opengl.fixedfunc.GLLightingFunc.*;
 
 public class Renderer implements GLEventListener {
 
@@ -32,21 +34,21 @@ public class Renderer implements GLEventListener {
     public Renderer(InputHandler input) {
         this.input = input;
 
-        camera = new Camera(input, new Vec3f(0.0f, 0.0f, 10.0f), 1.5f);
+        camera = new Camera(input, new Vec3f(0.0f, 0.0f, 10.0f), 3.0f);
     }
 
     @Override
     public void init(GLAutoDrawable drawable) {
         glu = new GLU();
         GL2 gl = drawable.getGL().getGL2();
-        gl.glClearColor(0.3f, 0.0f, 0.3f, 0.0f);
+        gl.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
         gl.glClearDepth(1.0f);
         gl.glEnable(GL.GL_DEPTH_TEST);
         gl.glEnable(GL_RESCALE_NORMAL); // I enable this so scaling will also rescale the normal otherwise lighting will be off
         gl.glEnable(GL_CULL_FACE);
         gl.glDepthFunc(GL.GL_LEQUAL);
         gl.glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
-        gl.glShadeModel(GL_SMOOTH);
+        gl.glShadeModel(GL_FLAT);
 
         start(gl);
     }
@@ -55,11 +57,10 @@ public class Renderer implements GLEventListener {
 
     // Entity
     Entity bunny, terrain1;
-
     public void start(GL2 gl) {
 
         // Light
-        Light sun = new Light(gl, new Vec3f(100f, 100f, 100f));
+        Light sun = new Light(gl, new Vec3f(1000f, 1000f, 1000f));
         sun.enable(gl);
 
         // How to use Mesh alone to create object (I replicate openGL core profile mode design)
@@ -81,8 +82,8 @@ public class Renderer implements GLEventListener {
         bunny = new Entity(gl, bunnyMesh, "yellow.png", new Vec3f(0.0f, 0.0f, 0.0f));
         bunny.scale(8.0f);
 
-        Plane plane1 = new Plane(new Vec3f(-5.0f, -2.0f, -3.0f), 10, 10, 15);
-        terrain1 = new Terrain(gl, plane1, "Heightmap2.png", 5.0f, "rough-purple.png").getEntity();
+        Plane plane1 = new Plane(new Vec3f(-5.0f, -2.0f, -3.0f), 30, 30, 63, true);
+        terrain1 = new Terrain(gl, plane1, "Heightmap.png", 5.0f, "rough-purple.png").getEntity();
     }
 
     @Override

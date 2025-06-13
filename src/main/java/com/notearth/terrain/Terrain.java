@@ -31,7 +31,11 @@ public class Terrain {
         lumaNormalize = new float[heightmap.getWidth() * heightmap.getHeight()];
 
         generateTerrain();
-        plane.calculateVertexNormals(plane.getMesh().getVertexData(), plane.getMesh().getIndices());
+        if (!plane.isSmooth()) {
+            plane.calculateVertexNormalsNOTSMOOTH(plane.getMesh().getVertexData(), plane.getMesh().getIndices());
+        } else {
+            plane.calculateVertexNormals(plane.getMesh().getVertexData(), plane.getMesh().getIndices());
+        }
         entity = new Entity(gl, plane.getMesh(), textureName, plane.getPosition(), GL_MIRRORED_REPEAT);
     }
 

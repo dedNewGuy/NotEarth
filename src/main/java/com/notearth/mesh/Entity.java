@@ -82,6 +82,7 @@ public class Entity {
             float ny = mesh.vertexData[vertexIdx + 6];
             float nz = mesh.vertexData[vertexIdx + 7];
 
+
             gl.glNormal3f(nx, ny, nz);
             gl.glTexCoord2f(u, v);
             gl.glVertex3f(x, y, z);
