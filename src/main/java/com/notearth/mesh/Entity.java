@@ -25,14 +25,6 @@ public class Entity {
         this.position = position.copy();
     }
 
-    public Entity(GL2 gl, Mesh mesh, String textureFilename, Vec3f position, int textureWrapMode) {
-        this.gl = gl;
-        this.mesh = mesh;
-        texture = TextureLoader.loadTexture(gl, textureFilename, textureWrapMode);
-
-        this.position = position.copy();
-    }
-
     /**
      * Rotate local is a function to rotate model around local axis instead of world axis
      * Use orbitAround to orbitAround specific axis

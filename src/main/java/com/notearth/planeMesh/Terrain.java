@@ -35,7 +35,7 @@ public class Terrain {
         } else {
             plane.calculateVertexNormals(plane.getMesh().getVertexData(), plane.getMesh().getIndices());
         }
-        entity = new Entity(gl, plane.getMesh(), textureName, plane.getPosition(), GL_MIRRORED_REPEAT);
+        entity = new Entity(gl, plane.getMesh(), textureName, plane.getPosition());
     }
 
     private int[] findMinMaxRGB() {

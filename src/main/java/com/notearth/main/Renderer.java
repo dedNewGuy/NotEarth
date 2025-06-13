@@ -8,10 +8,7 @@ import com.jogamp.opengl.fixedfunc.GLMatrixFunc;
 import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.math.Vec3f;
 import com.notearth.inputHandler.InputHandler;
-import com.notearth.mesh.Entity;
-import com.notearth.mesh.OBJLoader;
-import com.notearth.mesh.Mesh;
-import com.notearth.mesh.Plane;
+import com.notearth.mesh.*;
 import com.notearth.planeMesh.Terrain;
 
 import static com.jogamp.opengl.GL.*;
@@ -41,6 +38,7 @@ public class Renderer implements GLEventListener {
         gl.glClearDepth(1.0f);
         gl.glEnable(GL.GL_DEPTH_TEST);
         gl.glEnable(GL_RESCALE_NORMAL); // I enable this so scaling will also rescale the normal otherwise lighting will be off
+        gl.glEnable(GL_TEXTURE_2D);
         gl.glEnable(GL_CULL_FACE);
         gl.glDepthFunc(GL.GL_LEQUAL);
         gl.glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
@@ -54,6 +52,8 @@ public class Renderer implements GLEventListener {
     // Entity
     Entity bunny, terrain1;
     Entity water;
+
+    Skybox skybox;
 
     public void start(GL2 gl) {
 
@@ -85,6 +85,8 @@ public class Renderer implements GLEventListener {
 
         Plane waterPlane = new Plane(new Vec3f(-10.0f, -2.8f, -6.0f), 30, 30, 1, true);
         water = new Entity(gl, waterPlane.getMesh(), "blue.png", new Vec3f(0.0f, 0.0f, 0.0f));
+
+        skybox = new Skybox(gl, camera, 500);
     }
 
     @Override
@@ -118,6 +120,14 @@ public class Renderer implements GLEventListener {
         camera.update();
         input(deltaTime);
 
+        gl.glDepthMask(false);
+        gl.glDisable(GL_LIGHTING);
+        gl.glDisable(GL_DEPTH_TEST);
+        skybox.render();
+        gl.glDepthMask(true);
+        gl.glEnable(GL_LIGHTING);
+        gl.glEnable(GL_DEPTH_TEST);
+
 //        bunny.rotateLocal(angle, new Vec3f(0.0f, 1.0f, 0.0f));
 //        bunnyY = 0.2f * (float)Math.sin(Math.toRadians(bunnyAngle));
 //        bunny.setPosition(bunny.position.x(), bunnyY, bunny.position.z());
@@ -144,7 +154,7 @@ public class Renderer implements GLEventListener {
 
         gl.glMatrixMode(GLMatrixFunc.GL_PROJECTION);
         gl.glLoadIdentity();
-        glu.gluPerspective(45.0, aspect, 0.1, 100.0);
+        glu.gluPerspective(45.0, aspect, 0.1, 1000.0);
 
         gl.glMatrixMode(GLMatrixFunc.GL_MODELVIEW);
         gl.glLoadIdentity();
