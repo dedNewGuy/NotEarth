@@ -1,4 +1,4 @@
-package com.notearth.terrain;
+package com.notearth.planeMesh;
 
 import com.jogamp.opengl.GL2;
 import com.notearth.mesh.Entity;
@@ -12,7 +12,6 @@ import java.net.URISyntaxException;
 import java.util.Objects;
 
 import static com.jogamp.opengl.GL.GL_MIRRORED_REPEAT;
-import static com.jogamp.opengl.GL.GL_REPEAT;
 
 public class Terrain {
 

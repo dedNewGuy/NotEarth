@@ -12,15 +12,11 @@ import com.notearth.mesh.Entity;
 import com.notearth.mesh.OBJLoader;
 import com.notearth.mesh.Mesh;
 import com.notearth.mesh.Plane;
-import com.notearth.terrain.Terrain;
-
-import java.nio.FloatBuffer;
+import com.notearth.planeMesh.Terrain;
 
 import static com.jogamp.opengl.GL.*;
 import static com.jogamp.opengl.GL2ES1.GL_PERSPECTIVE_CORRECTION_HINT;
 import static com.jogamp.opengl.GL2ES1.GL_RESCALE_NORMAL;
-import static com.jogamp.opengl.GL2GL3.GL_FILL;
-import static com.jogamp.opengl.GL2GL3.GL_LINE;
 import static com.jogamp.opengl.fixedfunc.GLLightingFunc.*;
 
 public class Renderer implements GLEventListener {
@@ -57,6 +53,8 @@ public class Renderer implements GLEventListener {
 
     // Entity
     Entity bunny, terrain1;
+    Entity water;
+
     public void start(GL2 gl) {
 
         // Light
@@ -83,7 +81,10 @@ public class Renderer implements GLEventListener {
         bunny.scale(8.0f);
 
         Plane plane1 = new Plane(new Vec3f(-5.0f, -2.0f, -3.0f), 30, 30, 63, true);
-        terrain1 = new Terrain(gl, plane1, "Heightmap.png", 5.0f, "rough-purple.png").getEntity();
+        terrain1 = new Terrain(gl, plane1, "Heightmap.png", 6.0f, "rough-purple.png").getEntity();
+
+        Plane waterPlane = new Plane(new Vec3f(-10.0f, -2.8f, -6.0f), 30, 30, 1, true);
+        water = new Entity(gl, waterPlane.getMesh(), "blue.png", new Vec3f(0.0f, 0.0f, 0.0f));
     }
 
     @Override
@@ -123,6 +124,8 @@ public class Renderer implements GLEventListener {
 //        gl.glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
         terrain1.render();
+
+        water.render();
 
 //        gl.glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         // I use this instead of angle += 25f * deltaTime to avoid potential precision error and to make life easier in the future
