@@ -15,12 +15,12 @@ import static com.jogamp.opengl.GL.GL_MIRRORED_REPEAT;
 
 public class Terrain {
 
-    BufferedImage heightmap = null;
+    public static BufferedImage heightmap = null;
     Plane plane;
     Entity entity;
 
-    float[] lumaNormalize;
-    float peakAmplitude;
+    public static float[] lumaNormalize;
+    public static float peakAmplitude;
 
     public Terrain(GL2 gl, Plane plane, String heightmapFileName, float peakAmplitude, String textureName) {
         this.plane = plane;
@@ -36,6 +36,7 @@ public class Terrain {
             plane.calculateVertexNormals(plane.getMesh().getVertexData(), plane.getMesh().getIndices());
         }
         entity = new Entity(gl, plane.getMesh(), textureName, plane.getPosition());
+
     }
 
     private int[] findMinMaxRGB() {
@@ -106,4 +107,5 @@ public class Terrain {
     public Entity getEntity() {
         return entity;
     }
+
 }

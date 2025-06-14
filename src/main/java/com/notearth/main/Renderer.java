@@ -1,6 +1,5 @@
 package com.notearth.main;
 
-import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLEventListener;
@@ -14,6 +13,7 @@ import com.notearth.planeMesh.Terrain;
 import static com.jogamp.opengl.GL.*;
 import static com.jogamp.opengl.GL2ES1.GL_PERSPECTIVE_CORRECTION_HINT;
 import static com.jogamp.opengl.GL2ES1.GL_RESCALE_NORMAL;
+import static com.jogamp.opengl.GL2GL3.GL_LINE;
 import static com.jogamp.opengl.fixedfunc.GLLightingFunc.*;
 
 public class Renderer implements GLEventListener {
@@ -36,11 +36,11 @@ public class Renderer implements GLEventListener {
         GL2 gl = drawable.getGL().getGL2();
         gl.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
         gl.glClearDepth(1.0f);
-        gl.glEnable(GL.GL_DEPTH_TEST);
+        gl.glEnable(GL_DEPTH_TEST);
         gl.glEnable(GL_RESCALE_NORMAL); // I enable this so scaling will also rescale the normal otherwise lighting will be off
         gl.glEnable(GL_TEXTURE_2D);
         gl.glEnable(GL_CULL_FACE);
-        gl.glDepthFunc(GL.GL_LEQUAL);
+        gl.glDepthFunc(GL_LEQUAL);
         gl.glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
         gl.glShadeModel(GL_FLAT);
 
@@ -50,10 +50,19 @@ public class Renderer implements GLEventListener {
     OBJLoader objLoader = new OBJLoader();
 
     // Entity
-    Entity bunny, terrain1;
+    Entity terrain1;
     Entity water;
+    Entity building1, building1Orbit;
+    Entity[] tree1,tree1Leaves;     //array bcus got multiple of the same tree
 
     Skybox skybox;
+
+    float[][] tree1Coords = {       //coordinates for afzan's trees
+            {24.0f, -2.0f, 22.0f},
+            {-16f, -5.0f, 29f},
+            {12.0f,-1.0f,-5.0f},
+            {54.0f,-6.0f,0f}
+    };
 
     public void start(GL2 gl) {
 
@@ -76,17 +85,35 @@ public class Renderer implements GLEventListener {
 //
 //        square = new Mesh(vertexData, indices);
 
-        Mesh bunnyMesh = objLoader.loadOBJ("stanford-bunny");
-        bunny = new Entity(gl, bunnyMesh, "yellow.png", new Vec3f(0.0f, 0.0f, 0.0f));
-        bunny.scale(8.0f);
-
+        //generate terrain
         Plane plane1 = new Plane(new Vec3f(-5.0f, -2.0f, -3.0f), 30, 30, 63, true);
         terrain1 = new Terrain(gl, plane1, "Heightmap.png", 6.0f, "rough-purple.png").getEntity();
 
+        //generate water
         Plane waterPlane = new Plane(new Vec3f(-10.0f, -2.8f, -6.0f), 30, 30, 1, true);
         water = new Entity(gl, waterPlane.getMesh(), "blue.png", new Vec3f(0.0f, 0.0f, 0.0f));
 
+        //generate trees
+        tree1 = new Entity[4];
+        tree1Leaves = new Entity[4];
+        Mesh tree1Mesh = objLoader.loadOBJ("Alien Tree Base");
+        Mesh tree1LeavesMesh = objLoader.loadOBJ("Alien Tree Leaves");
+        for (int i=0;i<4;i++) {
+            generateTree1(gl,tree1Mesh, tree1LeavesMesh, tree1Coords, i);
+        }
+
+        //generate skybox
         skybox = new Skybox(gl, camera, 500);
+
+        //generate skyscraper
+        Mesh building1Mesh =  objLoader.loadOBJ("alien skyscraper 1");
+        building1 = new Entity(gl, building1Mesh, "black_wall.jpg", new Vec3f(20.0f, -4.0f,23.0f));
+        building1.scale(0.7f);
+
+        //generate skyscraper orbit
+        Mesh building1OrbitMesh  = objLoader.loadOBJ("alien skyscraper 2");
+        building1Orbit = new Entity(gl, building1OrbitMesh, "neon_blue.jpg", new Vec3f(20.0f, 7f,23.0f));
+        building1Orbit.scale(0.7f);
     }
 
     @Override
@@ -95,8 +122,8 @@ public class Renderer implements GLEventListener {
     }
 
     float angle = 0;
-    float bunnyY = 0;
-    float bunnyAngle = 0;
+    float buildingOrbitY = 7;
+    float buildingOrbitAngle = 0;
 
     @Override
     public void display(GLAutoDrawable drawable) {
@@ -106,7 +133,7 @@ public class Renderer implements GLEventListener {
         lastFrameTime = currentTime;
 
         GL2 gl = drawable.getGL().getGL2();
-        gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        gl.glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         gl.glLoadIdentity(); // Reset model view matrix
 
 
@@ -128,19 +155,35 @@ public class Renderer implements GLEventListener {
         gl.glEnable(GL_LIGHTING);
         gl.glEnable(GL_DEPTH_TEST);
 
+        //animations
 //        bunny.rotateLocal(angle, new Vec3f(0.0f, 1.0f, 0.0f));
 //        bunnyY = 0.2f * (float)Math.sin(Math.toRadians(bunnyAngle));
 //        bunny.setPosition(bunny.position.x(), bunnyY, bunny.position.z());
 //        gl.glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-        terrain1.render();
+        building1Orbit.rotateLocal(angle, new Vec3f(0.0f, 7.0f, 0.0f)); //rotation
+        buildingOrbitY = 0.7f * (float)Math.sin(Math.toRadians(buildingOrbitAngle));    //sin wave movement at y
+        building1Orbit.setPosition(building1Orbit.position.x(), buildingOrbitY, building1Orbit.position.z());
+        angle = (angle + 25f * deltaTime) % 360;
+        buildingOrbitAngle = (buildingOrbitAngle + 60 * deltaTime) % 360;
+        gl.glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
+
+        //render all models here
+        terrain1.render();
         water.render();
+        for (int i = 0; i<4; i++){
+            tree1[i].render();
+            tree1Leaves[i].render();
+        }
+        building1.render();
+        building1Orbit.render();
 
 //        gl.glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         // I use this instead of angle += 25f * deltaTime to avoid potential precision error and to make life easier in the future
 //        angle = (angle + 25f * deltaTime) % 360;
 //        bunnyAngle = (bunnyAngle + 60 * deltaTime) % 360;
+
     }
 
     @Override
@@ -163,5 +206,13 @@ public class Renderer implements GLEventListener {
 
     private void input(float deltaTime) {
         camera.input(deltaTime);
+    }
+
+    //reusable method for generating multiple of the same tree
+    private void generateTree1(GL2 gl, Mesh tree1Mesh, Mesh tree1LeavesMesh, float[][] tree1Coords, int i){
+        tree1[i] = new Entity(gl, tree1Mesh, "alien_tree_bark.jpg", new Vec3f(tree1Coords[i][0], tree1Coords[i][1], tree1Coords[i][2]));
+        tree1Leaves[i] = new Entity(gl, tree1LeavesMesh, "neon_blue.jpg", new Vec3f(tree1Coords[i][0], tree1Coords[i][1], tree1Coords[i][2]));
+        tree1[i].scale(0.3f);
+        tree1Leaves[i].scale(0.3f);
     }
 }
