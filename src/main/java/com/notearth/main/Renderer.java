@@ -67,53 +67,50 @@ public class Renderer implements GLEventListener {
     public void start(GL2 gl) {
 
         // Light
+        System.out.println("Preparing sun...");
         Light sun = new Light(gl, new Vec3f(1000f, 1000f, 1000f));
         sun.enable(gl);
 
-        // How to use Mesh alone to create object (I replicate openGL core profile mode design)
-//        float[] vertexData = {
-//                1.0f, 1.0f, 0.0f, 1.0f, 1.0f,
-//                1.0f, -1.0f, 0.0f, 1.0f, 0.0f,
-//                -1.0f, 1.0f, 0.0f, 0.0f, 1.0f,
-//                -1.0f, -1.0f, 0.0f, 0.0f, 0.0f
-//        };
-//
-//        int[] indices = {
-//                0, 2, 1,
-//                1, 2, 3
-//        };
-//
-//        square = new Mesh(vertexData, indices);
-
         //generate terrain
+        System.out.println("Generating terrain...");
         Plane plane1 = new Plane(new Vec3f(-5.0f, -2.0f, -3.0f), 30, 30, 63, true);
         terrain1 = new Terrain(gl, plane1, "Heightmap.png", 6.0f, "rough-purple.png").getEntity();
 
         //generate water
+        System.out.println("Generating water...");
         Plane waterPlane = new Plane(new Vec3f(-10.0f, -2.8f, -6.0f), 30, 30, 1, true);
         water = new Entity(gl, waterPlane.getMesh(), "blue.png", new Vec3f(0.0f, 0.0f, 0.0f));
 
         //generate trees
+        System.out.println("Generating tree...");
         tree1 = new Entity[4];
         tree1Leaves = new Entity[4];
         Mesh tree1Mesh = objLoader.loadOBJ("Alien Tree Base");
         Mesh tree1LeavesMesh = objLoader.loadOBJ("Alien Tree Leaves");
-        for (int i=0;i<4;i++) {
-            generateTree1(gl,tree1Mesh, tree1LeavesMesh, tree1Coords, i);
+        System.out.println("Generating tree loop start...");
+        for (int i=0; i<4; i++) {
+            generateTree1(gl, tree1Mesh, tree1LeavesMesh, tree1Coords, i);
+            System.out.println("Tree " + i + "...done");
         }
+        System.out.println("Generating tree loop end...");
 
         //generate skybox
+        System.out.println("Generating skybox...");
         skybox = new Skybox(gl, camera, 500);
 
         //generate skyscraper
+        System.out.println("Generating skyscraper...");
         Mesh building1Mesh =  objLoader.loadOBJ("alien skyscraper 1");
-        building1 = new Entity(gl, building1Mesh, "black_wall.jpg", new Vec3f(20.0f, -4.0f,23.0f));
+        building1 = new Entity(gl, building1Mesh, "black_wall.png", new Vec3f(20.0f, -4.0f,23.0f));
         building1.scale(0.7f);
 
         //generate skyscraper orbit
+        System.out.println("Generating skyscraper orbit...");
         Mesh building1OrbitMesh  = objLoader.loadOBJ("alien skyscraper 2");
-        building1Orbit = new Entity(gl, building1OrbitMesh, "neon_blue.jpg", new Vec3f(20.0f, 7f,23.0f));
+        building1Orbit = new Entity(gl, building1OrbitMesh, "neon_blue.png", new Vec3f(20.0f, 0f,23.0f)); // setting y here is redundant since it'll be handled by the animation
         building1Orbit.scale(0.7f);
+
+        System.out.println("Starting rendering process...");
     }
 
     @Override
@@ -147,6 +144,7 @@ public class Renderer implements GLEventListener {
         camera.update();
         input(deltaTime);
 
+        // TURN OFF DEPTH TESTING AND LIGHTING FOR SKYBOX ONLY
         gl.glDepthMask(false);
         gl.glDisable(GL_LIGHTING);
         gl.glDisable(GL_DEPTH_TEST);
@@ -154,20 +152,11 @@ public class Renderer implements GLEventListener {
         gl.glDepthMask(true);
         gl.glEnable(GL_LIGHTING);
         gl.glEnable(GL_DEPTH_TEST);
+        // TURN IT BACK ON FOR OTHERS
 
-        //animations
-//        bunny.rotateLocal(angle, new Vec3f(0.0f, 1.0f, 0.0f));
-//        bunnyY = 0.2f * (float)Math.sin(Math.toRadians(bunnyAngle));
-//        bunny.setPosition(bunny.position.x(), bunnyY, bunny.position.z());
-//        gl.glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-
-        building1Orbit.rotateLocal(angle, new Vec3f(0.0f, 7.0f, 0.0f)); //rotation
-        buildingOrbitY = 0.7f * (float)Math.sin(Math.toRadians(buildingOrbitAngle));    //sin wave movement at y
+        building1Orbit.rotateLocal(angle, new Vec3f(0.0f, 1.0f, 0.0f)); //rotation
+        buildingOrbitY = 0.6f * (float)Math.sin(Math.toRadians(buildingOrbitAngle)) + 4.0f;    //sin wave movement at y... add 4 at the end to shift position
         building1Orbit.setPosition(building1Orbit.position.x(), buildingOrbitY, building1Orbit.position.z());
-        angle = (angle + 25f * deltaTime) % 360;
-        buildingOrbitAngle = (buildingOrbitAngle + 60 * deltaTime) % 360;
-        gl.glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-
 
         //render all models here
         terrain1.render();
@@ -179,11 +168,8 @@ public class Renderer implements GLEventListener {
         building1.render();
         building1Orbit.render();
 
-//        gl.glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-        // I use this instead of angle += 25f * deltaTime to avoid potential precision error and to make life easier in the future
-//        angle = (angle + 25f * deltaTime) % 360;
-//        bunnyAngle = (bunnyAngle + 60 * deltaTime) % 360;
-
+        angle = (angle + 25f * deltaTime) % 360;
+        buildingOrbitAngle = (buildingOrbitAngle + 60 * deltaTime) % 360;
     }
 
     @Override
@@ -210,9 +196,13 @@ public class Renderer implements GLEventListener {
 
     //reusable method for generating multiple of the same tree
     private void generateTree1(GL2 gl, Mesh tree1Mesh, Mesh tree1LeavesMesh, float[][] tree1Coords, int i){
-        tree1[i] = new Entity(gl, tree1Mesh, "alien_tree_bark.jpg", new Vec3f(tree1Coords[i][0], tree1Coords[i][1], tree1Coords[i][2]));
-        tree1Leaves[i] = new Entity(gl, tree1LeavesMesh, "neon_blue.jpg", new Vec3f(tree1Coords[i][0], tree1Coords[i][1], tree1Coords[i][2]));
+        System.out.println("Creating tree " + i + " entity");
+        tree1[i] = new Entity(gl, tree1Mesh, "alien_tree_bark.png", new Vec3f(tree1Coords[i][0], tree1Coords[i][1], tree1Coords[i][2]));
+        System.out.println("Creating tree " + i + " leave entity");
+        tree1Leaves[i] = new Entity(gl, tree1LeavesMesh, "neon_blue.png", new Vec3f(tree1Coords[i][0], tree1Coords[i][1], tree1Coords[i][2]));
+        System.out.println("Scaling tree " + i + " entity");
         tree1[i].scale(0.3f);
+        System.out.println("Scaling tree " + i + " leave entity");
         tree1Leaves[i].scale(0.3f);
     }
 }

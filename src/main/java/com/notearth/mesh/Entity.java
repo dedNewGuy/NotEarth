@@ -20,9 +20,13 @@ public class Entity {
     public Entity(GL2 gl, Mesh mesh, String textureFilename, Vec3f position) {
         this.gl = gl;
         this.mesh = mesh;
+        System.out.println("Loading texture for " + textureFilename);
         texture = TextureLoader.loadTexture(gl, textureFilename);
+        System.out.println("Done loading texture for " + textureFilename);
 
+        System.out.println("Copying position vector..");
         this.position = position.copy();
+        System.out.println("Done copying position vector..");
     }
 
     /**

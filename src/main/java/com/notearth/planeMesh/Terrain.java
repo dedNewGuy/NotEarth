@@ -24,7 +24,7 @@ public class Terrain {
 
     public Terrain(GL2 gl, Plane plane, String heightmapFileName, float peakAmplitude, String textureName) {
         this.plane = plane;
-        this.peakAmplitude = peakAmplitude;
+        Terrain.peakAmplitude = peakAmplitude;
         loadHeightmap(heightmapFileName);
 
         lumaNormalize = new float[heightmap.getWidth() * heightmap.getHeight()];
@@ -75,6 +75,10 @@ public class Terrain {
                 ++idx;
             }
         }
+
+        // 0 - 255
+        // 0 - 1
+        // * amplitude
 
         float[] planeVertexData = plane.getMesh().getVertexData();
 
