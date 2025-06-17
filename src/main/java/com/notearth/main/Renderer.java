@@ -10,6 +10,8 @@ import com.notearth.inputHandler.InputHandler;
 import com.notearth.mesh.*;
 import com.notearth.planeMesh.Terrain;
 
+
+import java.util.Random;
 import static com.jogamp.opengl.GL.*;
 import static com.jogamp.opengl.GL2ES1.GL_PERSPECTIVE_CORRECTION_HINT;
 import static com.jogamp.opengl.GL2ES1.GL_RESCALE_NORMAL;
@@ -53,7 +55,13 @@ public class Renderer implements GLEventListener {
     Entity terrain1;
     Entity water;
     Entity building1, building1Orbit;
-    Entity[] tree1,tree1Leaves;     //array bcus got multiple of the same tree
+    Entity[] tree1,tree1Leaves;
+    //array bcus got multiple of the same tree
+
+    Entity alien1;
+    Entity fungi;
+    Entity[] fungi1;
+    Entity bigtree;
 
     Skybox skybox;
 
@@ -103,6 +111,35 @@ public class Renderer implements GLEventListener {
         Mesh building1Mesh =  objLoader.loadOBJ("alien skyscraper 1");
         building1 = new Entity(gl, building1Mesh, "black_wall.png", new Vec3f(20.0f, -4.0f,23.0f));
         building1.scale(0.7f);
+
+        //generate alien 1
+        System.out.println("Generating alien1...");
+        Mesh alien1Mesh =  objLoader.loadOBJ("alien 1");
+        alien1 = new Entity(gl, alien1Mesh, "alien texture.jpg", new Vec3f(-14.0f, 4.0f,19.0f));
+        alien1.scale(0.25f);
+
+        //generate fungi
+        System.out.println("Generating fungi...");
+        Mesh fungiMesh =  objLoader.loadOBJ("fungi");
+        fungi = new Entity(gl, fungiMesh, "fungi texture.jpg", new Vec3f(0.0f, 0.0f,0.0f));
+        fungi.scale(0.15f);
+
+        //generate fungi
+        System.out.println("Generating fungis...");
+        fungi1 = new Entity[20];
+        Mesh fungi1Mesh = objLoader.loadOBJ("fungi");
+        System.out.println("Generating fungi loop start...");
+        for (int i=0; i<20; i++) {
+            generatefungi(gl, fungi1Mesh, i);
+            System.out.println("Fungi " + i + "...done");
+        }
+        System.out.println("Generating fungi loop end...");
+
+        //generate bigtree
+        System.out.println("Generating big tree...");
+        Mesh treeMesh =  objLoader.loadOBJ("tree");
+        bigtree = new Entity(gl, treeMesh, "tree texture.jpg", new Vec3f(-8.0f, -13.0f,22.0f));
+        bigtree.scale(0.2f);
 
         //generate skyscraper orbit
         System.out.println("Generating skyscraper orbit...");
@@ -167,6 +204,14 @@ public class Renderer implements GLEventListener {
         }
         building1.render();
         building1Orbit.render();
+        alien1.render();
+        fungi.render();
+        for (int i = 0; i<20; i++){
+            fungi1[i].render();
+        }
+
+        bigtree.render();
+
 
         angle = (angle + 25f * deltaTime) % 360;
         buildingOrbitAngle = (buildingOrbitAngle + 60 * deltaTime) % 360;
@@ -204,5 +249,18 @@ public class Renderer implements GLEventListener {
         tree1[i].scale(0.3f);
         System.out.println("Scaling tree " + i + " leave entity");
         tree1Leaves[i].scale(0.3f);
+    }
+
+    private void generatefungi(GL2 gl, Mesh fungi1Mesh, int i){
+        float x,y,z;
+        Random random= new Random();
+         x = random.nextFloat(30);
+         y = random.nextFloat(30)- 2;
+         z = random.nextFloat(63);
+        System.out.println("Creating fungi " + i + " entity");
+        fungi1[i] = new Entity(gl, fungi1Mesh, "fungi texture.jpg", new Vec3f(x,y,z));
+        System.out.println("Scaling fungi " + i + " entity");
+        fungi1[i].scale(0.25f);
+
     }
 }

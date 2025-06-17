@@ -6,7 +6,7 @@
       <sourceFolder url="file://$MODULE_DIR$/src/main/java" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/main/resources" type="java-resource" />
     </content>
-    <orderEntry type="inheritedJdk" />
+    <orderEntry type="jdk" jdkName="ms-17" jdkType="JavaSDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module-library">
       <library>
@@ -21,7 +21,6 @@
         <jarDirectory url="file://$USER_HOME$/Personal/jogamp-all-platforms/jar" recursive="false" type="SOURCES" />
       </library>
     </orderEntry>
-    <orderEntry type="library" exported="" name="windows-amd64" level="project" />
     <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
@@ -35,5 +34,10 @@
         <jarDirectory url="file://$USER_HOME$/JOGL/jogamp-all-platforms/jar" recursive="false" type="SOURCES" />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="jogl-all" level="project" />
+    <orderEntry type="library" name="jogl-all-natives-windows-amd64" level="project" />
+    <orderEntry type="library" name="gluegen-rt" level="project" />
+    <orderEntry type="library" name="gluegen-rt-natives-windows-amd64" level="project" />
+    <orderEntry type="library" name="windows-amd65" level="project" />
   </component>
 </module>
