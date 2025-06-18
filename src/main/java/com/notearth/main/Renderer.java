@@ -10,7 +10,6 @@ import com.notearth.inputHandler.InputHandler;
 import com.notearth.mesh.*;
 import com.notearth.planeMesh.Terrain;
 
-
 import java.util.Random;
 import static com.jogamp.opengl.GL.*;
 import static com.jogamp.opengl.GL2ES1.GL_PERSPECTIVE_CORRECTION_HINT;
@@ -63,6 +62,8 @@ public class Renderer implements GLEventListener {
     Entity fungi;
     Entity[] fungi1;
     Entity bigtree;
+    Entity tower;
+    Entity alien2;
 
     Skybox skybox;
 
@@ -124,13 +125,22 @@ public class Renderer implements GLEventListener {
         alien1 = new Entity(gl, alien1Mesh, "alien texture.jpg", new Vec3f(-14.0f, 4.0f,19.0f));
         alien1.scale(0.25f);
 
+        //generate alien 2
+        System.out.println("Generating alien2...");
+        Mesh alien2Mesh =  objLoader.loadOBJ("alien2");
+        alien2 = new Entity(gl, alien2Mesh, "alien2 texture.jpg", new Vec3f(30.0f, -3.0f,35.0f));
+        alien2.scale(0.25f);
+        //alien2.rotateLocal(90.0f, new Vec3f(-4.0f, 4.0f,19.0f)); // setRotation(pitch, yaw, roll)
+
+
+
         //generate fungi
         System.out.println("Generating fungi...");
         Mesh fungiMesh =  objLoader.loadOBJ("fungi");
         fungi = new Entity(gl, fungiMesh, "fungi texture.jpg", new Vec3f(0.0f, 0.0f,0.0f));
         fungi.scale(0.15f);
 
-        //generate fungi
+        //generate fungis
         System.out.println("Generating fungis...");
         fungi1 = new Entity[20];
         Mesh fungi1Mesh = objLoader.loadOBJ("fungi");
@@ -144,8 +154,14 @@ public class Renderer implements GLEventListener {
         //generate bigtree
         System.out.println("Generating big tree...");
         Mesh treeMesh =  objLoader.loadOBJ("tree");
-        bigtree = new Entity(gl, treeMesh, "tree texture.jpg", new Vec3f(-8.0f, -13.0f,22.0f));
-        bigtree.scale(0.2f);
+        bigtree = new Entity(gl, treeMesh, "tree texture.jpg", new Vec3f(-38.0f, -6.0f,-30.0f));
+        bigtree.scale(0.05f);
+
+        //generate tower....
+        System.out.println("Generating tower...");
+        Mesh towerMesh =  objLoader.loadOBJ("tower1");
+        tower = new Entity(gl, towerMesh, "blue gray bg.jpg", new Vec3f(-80.0f, -30.0f,185.0f));
+        tower.scale(0.1f);
 
         //generate skyscraper orbit
         System.out.println("Generating skyscraper orbit...");
@@ -251,12 +267,15 @@ public class Renderer implements GLEventListener {
         building1Orbit.render();
         alien1.render();
         fungi.render();
-        for (int i = 0; i<20; i++){
+        for (int i = 0; i < 20; i++) {
+            Vec3f pos = fungi1[i].position;
+            float yOffset = 0.15f * (float) Math.sin(currentTime / 500000000.0 + i); // Add phase shift using i
+            fungi1[i].setPosition(pos.x(), pos.y() + yOffset, pos.z());
             fungi1[i].render();
         }
-
         bigtree.render();
-
+        tower.render();
+        alien2.render();
 
 
         alienPatrolAngle1 = (alienPatrolAngle1 + 50f * deltaTime) % 360;
