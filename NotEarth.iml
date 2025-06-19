@@ -34,10 +34,12 @@
         <jarDirectory url="file://$USER_HOME$/JOGL/jogamp-all-platforms/jar" recursive="false" type="SOURCES" />
       </library>
     </orderEntry>
-    <orderEntry type="library" name="jogl-all" level="project" />
-    <orderEntry type="library" name="jogl-all-natives-windows-amd64" level="project" />
+
     <orderEntry type="library" name="gluegen-rt" level="project" />
-    <orderEntry type="library" name="gluegen-rt-natives-windows-amd64" level="project" />
-    <orderEntry type="library" name="windows-amd65" level="project" />
+    <orderEntry type="library" name="gluegen" level="project" />
+    <orderEntry type="library" name="jogl-all-natives-macosx-universal" level="project" />
+    <orderEntry type="library" name="jogl-all" level="project" />
+    <orderEntry type="library" name="macosx-universal" level="project" />
+
   </component>
 </module>
