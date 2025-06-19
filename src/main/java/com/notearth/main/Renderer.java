@@ -14,7 +14,6 @@ import java.util.Random;
 import static com.jogamp.opengl.GL.*;
 import static com.jogamp.opengl.GL2ES1.GL_PERSPECTIVE_CORRECTION_HINT;
 import static com.jogamp.opengl.GL2ES1.GL_RESCALE_NORMAL;
-import static com.jogamp.opengl.GL2GL3.GL_LINE;
 import static com.jogamp.opengl.fixedfunc.GLLightingFunc.*;
 
 public class Renderer implements GLEventListener {
@@ -130,7 +129,7 @@ public class Renderer implements GLEventListener {
         Mesh alien2Mesh =  objLoader.loadOBJ("alien2");
         alien2 = new Entity(gl, alien2Mesh, "alien2 texture.jpg", new Vec3f(30.0f, -3.0f,35.0f));
         alien2.scale(0.25f);
-        //alien2.rotateLocal(90.0f, new Vec3f(-4.0f, 4.0f,19.0f)); // setRotation(pitch, yaw, roll)
+        alien2.rotateLocal(180.0f, new Vec3f(0.0f, 4.0f,0.0f)); // setRotation(pitch, yaw, roll)
 
 
 
@@ -189,8 +188,7 @@ public class Renderer implements GLEventListener {
     public void dispose(GLAutoDrawable drawable) {
 
     }
-
-    float angle = 0;
+    
     float buildingOrbitY = 7;
     float buildingOrbitAngle = 0;
     float alienPatrolAngle1 = 0;
