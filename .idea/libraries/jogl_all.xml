@@ -2,6 +2,7 @@
   <library name="jogl-all">
     <CLASSES>
       <root url="jar://$PROJECT_DIR$/../jogamp-all-platforms/jar/jogl-all.jar!/" />
+
     </CLASSES>
     <JAVADOC />
     <SOURCES />
