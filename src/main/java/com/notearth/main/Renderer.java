@@ -9,7 +9,6 @@ import com.jogamp.opengl.math.Vec3f;
 import com.notearth.inputHandler.InputHandler;
 import com.notearth.mesh.*;
 import com.notearth.planeMesh.Terrain;
-
 import java.util.Random;
 import static com.jogamp.opengl.GL.*;
 import static com.jogamp.opengl.GL2ES1.GL_PERSPECTIVE_CORRECTION_HINT;
