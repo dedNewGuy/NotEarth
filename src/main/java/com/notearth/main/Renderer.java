@@ -47,7 +47,7 @@ public class Renderer implements GLEventListener {
     }
 
     OBJLoader objLoader = new OBJLoader();
-
+    Random random = new Random();
     // Entity
     Entity terrain1;
     Entity water;
@@ -56,7 +56,6 @@ public class Renderer implements GLEventListener {
     Entity[] alienPatrolBottom, alienPatrolTop;     //same here
 
     Entity alien1;
-    Entity fungi;
     Entity[] fungi1;
     Entity bigtree;
     Entity tower;
@@ -112,7 +111,7 @@ public class Renderer implements GLEventListener {
         //generate terrain
         System.out.println("Generating terrain...");
         Plane plane1 = new Plane(new Vec3f(-5.0f, -2.0f, -3.0f), 30, 30, 63, true);
-        terrain1 = new Terrain(gl, plane1, "Heightmap.png", 6.0f, "rough-purple.png").getEntity();
+        terrain1 = new Terrain(gl, plane1, "Heightmap.png", 6.0f, "weird_grass.png").getEntity();
 
         //generate water
         System.out.println("Generating water...");
@@ -155,21 +154,13 @@ public class Renderer implements GLEventListener {
         alien2.scale(0.25f);
         alien2.rotateLocal(180.0f, new Vec3f(0.0f, 4.0f,0.0f)); // setRotation(pitch, yaw, roll)
 
-
-
-        //generate fungi
-        System.out.println("Generating fungi...");
-        Mesh fungiMesh =  objLoader.loadOBJ("fungi");
-        fungi = new Entity(gl, fungiMesh, "fungi texture.jpg", new Vec3f(0.0f, 0.0f,0.0f));
-        fungi.scale(0.15f);
-
         //generate fungis
         System.out.println("Generating fungis...");
-        fungi1 = new Entity[20];
+        fungi1 = new Entity[6];
         Mesh fungi1Mesh = objLoader.loadOBJ("fungi");
         System.out.println("Generating fungi loop start...");
-        for (int i=0; i<20; i++) {
-            generatefungi(gl, fungi1Mesh, i);
+        for (int i = 0; i < fungi1.length; i++) {
+            generateFungi(gl, random, fungi1Mesh, i);
             System.out.println("Fungi " + i + "...done");
         }
         System.out.println("Generating fungi loop end...");
@@ -216,8 +207,8 @@ public class Renderer implements GLEventListener {
 
         //generate moon
         Mesh moonMesh = objLoader.loadOBJ("moon");
-        moon = new Entity(gl, moonMesh, "moon_texture.jpg", new Vec3f(0.0f, 3.0f, 0.0f));
-        moon.scale(13.0f);
+        moon = new Entity(gl, moonMesh, "moon_texture.png", new Vec3f(10.0f, 20.0f, 10.0f));
+        moon.scale(20.0f);
     }
 
     @Override
@@ -300,8 +291,7 @@ public class Renderer implements GLEventListener {
         building1.render();
         building1Orbit.render();
         alien1.render();
-        fungi.render();
-        for (int i = 0; i < 20; i++) {
+        for (int i = 0; i < fungi1.length; i++) {
             Vec3f pos = fungi1[i].position;
             float yOffset = 0.15f * (float) Math.sin(currentTime / 500000000.0 + i); // Add phase shift using i
             fungi1[i].setPosition(pos.x(), pos.y() + yOffset, pos.z());
@@ -376,16 +366,14 @@ public class Renderer implements GLEventListener {
         alienPatrolTop[i].scale(0.3f);
     }
 
-    private void generatefungi(GL2 gl, Mesh fungi1Mesh, int i){
+    private void generateFungi(GL2 gl, Random random, Mesh fungi1Mesh, int i){
         float x,y,z;
-        Random random= new Random();
-         x = random.nextFloat(30);
-         y = random.nextFloat(30)- 2;
-         z = random.nextFloat(63);
+         x = random.nextFloat(64);
+         y = random.nextFloat(15)- 2;
+         z = random.nextFloat(64);
         System.out.println("Creating fungi " + i + " entity");
         fungi1[i] = new Entity(gl, fungi1Mesh, "fungi texture.jpg", new Vec3f(x,y,z));
         System.out.println("Scaling fungi " + i + " entity");
         fungi1[i].scale(0.25f);
-
     }
 }
