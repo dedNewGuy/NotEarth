@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="macosx-universal">
+    <CLASSES />
+    <JAVADOC />
+    <NATIVE>
+      <root url="file://$PROJECT_DIR$/../jogamp-all-platforms/lib/macosx-universal" />
+    </NATIVE>
+    <SOURCES />
+  </library>
+</component>
