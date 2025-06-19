@@ -53,21 +53,47 @@ public class Renderer implements GLEventListener {
     Entity terrain1;
     Entity water;
     Entity building1, building1Orbit;
-    Entity[] tree1,tree1Leaves;                     //array bcus got multiple of the same tree
+    Entity[] tree1, tree1Leaves;                     //array bcus got multiple of the same tree
     Entity[] alienPatrolBottom, alienPatrolTop;     //same here
+    Entity[] cloud;
+    Entity moon;
+
 
     Skybox skybox;
 
     float[][] tree1Coords = {       //coordinates for tree 1's (4 trees)
             {24.0f, -2.0f, 22.0f},
             {-16f, -5.0f, 29f},
-            {12.0f,-1.0f,-5.0f},
-            {54.0f,-6.0f,0f}
+            {12.0f, -1.0f, -5.0f},
+            {54.0f, -6.0f, 0f}
     };
 
     float[][] alienPatrolCoords = {     //coords for alien patrol (2 aliens)
-            {20f,-5f,20f},
-            {5f,-10f,5f}
+            {20f, -5f, 20f},
+            {5f, -10f, 5f}
+    };
+
+    float[][] cloudCoords = {       //coordinates for cloud
+            {10.0f, 5.0f, 10.0f},
+            {15.0f, 5.0f, 40.0f},
+            {20.0f, 5.0f, 15.0f},
+            {30.0f, 5.0f, 40.0f},
+            {15.0f, 5.0f, 20.0f},
+            {25.0f, 5.0f, 30.0f},
+            {20.0f, 5.0f, -10.0f},
+            {20.0f, 5.0f, -20.0f},
+            {-25.0f, 5.0f, -40.0f},
+            {-24.0f, 5.0f, -20.0f},
+            {-10.0f, 5.0f, -10.0f},
+            {25.0f, 5.0f, -40.0f},
+            {-21.0f, 5.0f, 15.0f},
+            {30.0f, 5.0f, -40.0f},
+            {-45.0f, 5.0f, 30.0f},
+            {40.0f, 5.0f, -30.0f},
+            {-20.0f, 5.0f, 10.0f},
+            {-20.0f, 5.0f, 20.0f},
+            {25.0f, 5.0f, -30.0f},
+            {-15.0f, 5.0f, 25.0f},
     };
 
     public void start(GL2 gl) {
@@ -94,7 +120,7 @@ public class Renderer implements GLEventListener {
         Mesh tree1Mesh = objLoader.loadOBJ("Alien Tree Base");
         Mesh tree1LeavesMesh = objLoader.loadOBJ("Alien Tree Leaves");
         System.out.println("Generating tree loop start...");
-        for (int i=0; i<4; i++) {
+        for (int i = 0; i < 4; i++) {
             generateTree1(gl, tree1Mesh, tree1LeavesMesh, tree1Coords, i);
             System.out.println("Tree " + i + "...done");
         }
@@ -106,14 +132,14 @@ public class Renderer implements GLEventListener {
 
         //generate skyscraper
         System.out.println("Generating skyscraper...");
-        Mesh building1Mesh =  objLoader.loadOBJ("alien skyscraper 1");
-        building1 = new Entity(gl, building1Mesh, "black_wall.png", new Vec3f(20.0f, -4.0f,23.0f));
+        Mesh building1Mesh = objLoader.loadOBJ("alien skyscraper 1");
+        building1 = new Entity(gl, building1Mesh, "black_wall.png", new Vec3f(20.0f, -4.0f, 23.0f));
         building1.scale(0.7f);
 
         //generate skyscraper orbit
         System.out.println("Generating skyscraper orbit...");
-        Mesh building1OrbitMesh  = objLoader.loadOBJ("alien skyscraper 2");
-        building1Orbit = new Entity(gl, building1OrbitMesh, "neon_blue.png", new Vec3f(20.0f, 0f,23.0f)); // setting y here is redundant since it'll be handled by the animation
+        Mesh building1OrbitMesh = objLoader.loadOBJ("alien skyscraper 2");
+        building1Orbit = new Entity(gl, building1OrbitMesh, "neon_blue.png", new Vec3f(20.0f, 0f, 23.0f)); // setting y here is redundant since it'll be handled by the animation
         building1Orbit.scale(0.7f);
 
         //generate alien patrols
@@ -123,13 +149,25 @@ public class Renderer implements GLEventListener {
         Mesh alienPatrolTopMesh = objLoader.loadOBJ("alien patrol top");
         Mesh alienPatrolBottomMesh = objLoader.loadOBJ("alien patrol bottom");
         System.out.println("Generating alien patrols loop start...");
-        for (int i=0; i<2; i++) {
+        for (int i = 0; i < 2; i++) {
             generateAlienPatrols(gl, alienPatrolBottomMesh, alienPatrolTopMesh, alienPatrolCoords, i);
             System.out.println("alien patrol  " + i + "...done");
         }
         System.out.println("Generating alien patrols loop end...");
 
         System.out.println("Starting rendering process...");
+
+        //generate cloud
+        cloud = new Entity[20];
+        Mesh cloudMesh = objLoader.loadOBJ("cloud");
+        for (int i = 0; i < 20; i++) {
+            generateCloud(gl, cloudMesh, cloudCoords, i);
+        }
+
+        //generate moon
+        Mesh moonMesh = objLoader.loadOBJ("moon");
+        moon = new Entity(gl, moonMesh, "moon_texture.jpg", new Vec3f(0.0f, 3.0f, 0.0f));
+        moon.scale(13.0f);
     }
 
     @Override
@@ -179,31 +217,31 @@ public class Renderer implements GLEventListener {
 
         //building1 orbit animation
         building1Orbit.rotateLocal(buildingOrbitAngle, new Vec3f(0.0f, 1.0f, 0.0f)); //rotation
-        buildingOrbitY = 0.8f * (float)Math.sin(Math.toRadians(buildingOrbitAngle)) + 5.0f;    //sin wave movement at y... add 5 at the end to shift position
+        buildingOrbitY = 0.8f * (float) Math.sin(Math.toRadians(buildingOrbitAngle)) + 5.0f;    //sin wave movement at y... add 5 at the end to shift position
         building1Orbit.setPosition(building1Orbit.position.x(), buildingOrbitY, building1Orbit.position.z());
 
         //alien patrol 1 animation(ellipse loop path)
         alienPatrolBottom[0].rotateLocal(alienPatrolAngle1, new Vec3f(0.0f, 1.0f, 0.0f));
-        alienPatrolX1 = 5f *(float)Math.sin(Math.toRadians(alienPatrolAngle1)) + 12f;     //uses 1 sin wave & 1 cos wave
-        alienPatrolZ1 = 5f *(float)Math.cos(Math.toRadians(alienPatrolAngle1)) + 15f;
+        alienPatrolX1 = 5f * (float) Math.sin(Math.toRadians(alienPatrolAngle1)) + 12f;     //uses 1 sin wave & 1 cos wave
+        alienPatrolZ1 = 5f * (float) Math.cos(Math.toRadians(alienPatrolAngle1)) + 15f;
         alienPatrolBottom[0].setPosition(alienPatrolX1, alienPatrolBottom[0].position.y(), alienPatrolZ1);
         alienPatrolTop[0].setPosition(alienPatrolX1, alienPatrolBottom[0].position.y(), alienPatrolZ1);
 
         //alien patrol 2 animation(infinity loop path)
         alienPatrolBottom[1].rotateLocal(alienPatrolAngle2, new Vec3f(0.0f, 1.0f, 0.0f));
-        alienPatrolX2 = 5f *(float)Math.sin(Math.toRadians(alienPatrolAngle2)) + 28f;     //uses 2 sin waves, 1 of it has larger wavelength
-        alienPatrolZ2 = 5f *(float)Math.sin(Math.toRadians(alienPatrolAngle2)*2) + 58f;
+        alienPatrolX2 = 5f * (float) Math.sin(Math.toRadians(alienPatrolAngle2)) + 28f;     //uses 2 sin waves, 1 of it has larger wavelength
+        alienPatrolZ2 = 5f * (float) Math.sin(Math.toRadians(alienPatrolAngle2) * 2) + 58f;
         alienPatrolBottom[1].setPosition(alienPatrolX2, alienPatrolBottom[1].position.y(), alienPatrolZ2);
         alienPatrolTop[1].setPosition(alienPatrolX2, alienPatrolBottom[1].position.y(), alienPatrolZ2);
 
         //render all models here
         terrain1.render();
         water.render();
-        for (int i = 0; i<4; i++){
+        for (int i = 0; i < 4; i++) {
             tree1[i].render();
             tree1Leaves[i].render();
 
-            if(i<2){        // malas buat extra loop :)
+            if (i < 2) {        // malas buat extra loop :)
                 alienPatrolBottom[i].render();
                 alienPatrolTop[i].render();
             }
@@ -215,14 +253,21 @@ public class Renderer implements GLEventListener {
         alienPatrolAngle1 = (alienPatrolAngle1 + 50f * deltaTime) % 360;
         alienPatrolAngle2 = (alienPatrolAngle2 + 50f * deltaTime) % 360;
         buildingOrbitAngle = (buildingOrbitAngle + 25f * deltaTime) % 360;
+
+        moon.render();
+        //render cloud
+        for (int i = 0; i < 20; i++) {
+            cloud[i].render();
+
+        }
     }
 
     @Override
-    public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
+    public void reshape (GLAutoDrawable drawable,int x, int y, int width, int height){
         GL2 gl = drawable.getGL().getGL2();
 
         if (height == 0) height = 1;
-        float aspect = (float)width/height;
+        float aspect = (float) width / height;
 
         gl.glViewport(0, 0, width, height);
 
@@ -235,12 +280,17 @@ public class Renderer implements GLEventListener {
 
     }
 
-    private void input(float deltaTime) {
+    private void input (float deltaTime){
         camera.input(deltaTime);
     }
 
+    private void generateCloud (GL2 gl, Mesh cloudMesh,float[][] cloudCoords, int i){
+        cloud[i] = new Entity(gl, cloudMesh, "cloud_texture.jpg", new Vec3f(cloudCoords[i][0], cloudCoords[i][1], cloudCoords[i][2]));
+        cloud[i].scale(10.0f);
+    }
+
     //reusable method for generating multiple of the same tree
-    private void generateTree1(GL2 gl, Mesh tree1Mesh, Mesh tree1LeavesMesh, float[][] tree1Coords, int i){
+    private void generateTree1 (GL2 gl, Mesh tree1Mesh, Mesh tree1LeavesMesh,float[][] tree1Coords, int i){
         System.out.println("Creating tree " + i + " entity");
         tree1[i] = new Entity(gl, tree1Mesh, "alien_tree_bark.png", new Vec3f(tree1Coords[i][0], tree1Coords[i][1], tree1Coords[i][2]));
         System.out.println("Creating tree " + i + " leave entity");
@@ -252,7 +302,8 @@ public class Renderer implements GLEventListener {
     }
 
     //same for alien patrols (2 entities bcus separate animation)
-    private void generateAlienPatrols(GL2 gl, Mesh alienPatrolBottomMesh, Mesh alienPatrolTopMesh, float[][] alienPatrolCoords, int i){
+    private void generateAlienPatrols (GL2 gl, Mesh alienPatrolBottomMesh, Mesh alienPatrolTopMesh,
+                                       float[][] alienPatrolCoords, int i){
         System.out.println("Creating alien patrol " + i + " bottom entity");
         alienPatrolBottom[i] = new Entity(gl, alienPatrolBottomMesh, "white_blue_gradient.jpg", new Vec3f(alienPatrolCoords[i][0], alienPatrolCoords[i][1], alienPatrolCoords[i][2]));
         System.out.println("Creating alien patrol " + i + " top entity");
