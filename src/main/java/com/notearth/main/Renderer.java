@@ -285,7 +285,7 @@ public class Renderer implements GLEventListener {
     }
 
     private void generateCloud (GL2 gl, Mesh cloudMesh,float[][] cloudCoords, int i){
-        cloud[i] = new Entity(gl, cloudMesh, "cloud_texture.jpg", new Vec3f(cloudCoords[i][0], cloudCoords[i][1], cloudCoords[i][2]));
+        cloud[i] = new Entity(gl, cloudMesh, "cloud_texture.png", new Vec3f(cloudCoords[i][0], cloudCoords[i][1], cloudCoords[i][2]));
         cloud[i].scale(10.0f);
     }
 
